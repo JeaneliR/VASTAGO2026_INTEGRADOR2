@@ -1,0 +1,718 @@
+/* --- CONFIGURACIÓN GENERAL --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: #f7f5f0;
+}
+
+/* --- LAYOUT DE PANTALLA DIVIDIDA --- */
+.login-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* --- PANEL IZQUIERDO (Branding Corporativo) --- */
+.login-branding {
+    flex: 1;
+    background-color: #4a2e1b; /* Tono marrón corporativo chocolate */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto estético sutil de fondo inspirado en el mockup */
+.login-branding::after {
+    content: '';
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(212, 163, 89, 0.25) 0%, rgba(74, 46, 27, 0) 70%);
+    top: 20%;
+    right: 15%;
+    border-radius: 50%;
+}
+
+.branding-content {
+    max-width: 480px;
+    z-index: 2;
+}
+
+.branding-content h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.branding-content h1 span {
+    color: #d4a359; /* Tono dorado/cacao claro */
+}
+
+.branding-content p {
+    font-size: 1.1rem;
+    color: #e0d0c0;
+}
+
+/* --- PANEL DERECHO (Formulario) --- */
+.login-form-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fbf9f4;
+}
+
+.login-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(74, 46, 27, 0.08);
+    width: 100%;
+    max-width: 440px;
+}
+
+/* --- LOGOTIPO Y CABECERA DEL FORMULARIO --- */
+.logo-container {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.logo-container h2 {
+    font-size: 1.5rem;
+    color: #4a2e1b;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.logo-container .subtitle {
+    font-size: 0.75rem;
+    color: #8c6d53;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.login-card h3 {
+    font-size: 0.95rem;
+    color: #555555;
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+/* --- CAMPOS DE ENTRADA (Inputs) --- */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #333333;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #333333;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #4a2e1b;
+}
+
+/* --- OPCIONES (Recordar / Recuperar) --- */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #555555;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: #4a2e1b;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* --- BOTÓN PRINCIPAL (CTA) --- */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: #653b20; /* Tono chocolate interactivo */
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #4a2e1b;
+}
+
+/* --- PIE DE PÁGINA DE LA TARJETA --- */
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.8rem;
+    color: #888888;
+}
+
+/* --- DISEÑO RESPONSIVE (Adaptable a pantallas pequeñas) --- */
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+    }
+    .login-branding {
+        display: none; /* Oculta el panel izquierdo en móviles para priorizar el login */
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- LAYOUT DE LA APLICACIÓN (APP.HTML) --- */
+.app-body {
+    background-color: #f4f2ed;
+    margin: 0;
+    padding: 0;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* --- SIDEBAR LATERAL --- */
+.sidebar {
+    width: 260px;
+    background-color: #3b2314; /* Tono chocolate oscuro del mockup */
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.sidebar-header {
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h2 {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.sidebar-header span {
+    font-size: 0.65rem;
+    color: #d4a359;
+    letter-spacing: 1px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 0;
+}
+
+.sidebar-nav li a {
+    display: block;
+    padding: 12px 20px;
+    color: #c5b5a5;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.sidebar-nav li a:hover, 
+.sidebar-nav li a.active {
+    background-color: #4a2e1b;
+    color: #ffffff;
+    border-left: 4px solid #d4a359;
+}
+
+.sidebar-footer {
+    padding: 15px 20px;
+    font-size: 0.75rem;
+    color: #8c735c;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.top-header {
+    background-color: #ffffff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e0d8;
+}
+
+.search-bar input {
+    width: 350px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: #777;
+}
+
+/* --- ÁREA DE TRABAJO Y COMPONENTES --- */
+.content-area {
+    padding: 30px;
+}
+
+.breadcrumb {
+    font-size: 0.8rem;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.page-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header-flex h2 {
+    color: #3b2314;
+    font-size: 1.5rem;
+}
+
+.btn-primary-action {
+    background-color: #5a3822;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* KPIs Grid */
+.kpi-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.kpi-card p {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.kpi-card h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 8px 0;
+}
+
+.kpi-card small {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+/* Tablas */
+.table-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background-color: #f9f8f6;
+    color: #444;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e5e0d8;
+}
+
+.data-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0eae1;
+    color: #333;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.badge-critical {
+    background-color: #fde8e8;
+    color: #9b1c1c;
+}
+
+.badge-ok {
+    background-color: #def7ec;
+    color: #03543f;
+}
+
+.action-link {
+    color: #5a3822;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- ESTADOS Y BADGES ADICIONALES --- */
+.badge-in-process {
+    background-color: #e1effe;
+    color: #1e429f;
+}
+
+.badge-pending {
+    background-color: #fdf6b2;
+    color: #723b13;
+}
+
+.text-danger {
+    color: #9b1c1c !important;
+}
+
+
+/* --- ESTILOS GENERALES Y VISTAS (ERP VÁSTAGO & CO) --- */
+.app-body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f2ee;
+    color: #3b2314;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: #2b170e;
+    color: #f4f2ee;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-header span {
+    font-size: 0.65rem;
+    color: #c4a482;
+    letter-spacing: 1px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li a {
+    display: block;
+    padding: 12px 20px;
+    color: #d1c7bd;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.sidebar-nav li a:hover, 
+.sidebar-nav li a.active {
+    background-color: #5a3822;
+    color: #ffffff;
+    border-left: 4px solid #c4a482;
+}
+
+.sidebar-footer {
+    padding: 15px 20px;
+    font-size: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: #a3958c;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.top-header {
+    height: 70px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e0d8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.search-bar input {
+    width: 320px;
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid #dcd6ce;
+    background-color: #f9f8f6;
+    font-size: 0.9rem;
+}
+
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: #777;
+}
+
+.content-area {
+    padding: 30px;
+}
+
+/* Secciones de vista ocultas/visibles */
+.vista-seccion {
+    display: none;
+}
+
+.vista-seccion.active-vista {
+    display: block;
+}
+
+/* Breadcrumbs y Títulos */
+.breadcrumb {
+    font-size: 0.8rem;
+    color: #887a70;
+    margin-bottom: 8px;
+}
+
+.page-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header-flex h2 {
+    margin: 0;
+    color: #3b2314;
+    font-size: 1.6rem;
+}
+
+.page-header-flex p {
+    margin: 4px 0 0 0;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+/* Botones y Badges */
+.btn-primary-action {
+    background-color: #5a3822;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.btn-primary-action:hover {
+    background-color: #3b2314;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.badge-ok { background-color: #def7ec; color: #03543f; }
+.badge-critical { background-color: #fde8e8; color: #9b1c1c; }
+.badge-warning { background-color: #fef08a; color: #713f12; }
+.badge-in-process { background-color: #e1effe; color: #1e429f; }
+
+/* Tablas y Tarjetas KPI */
+.kpi-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e0d8;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.kpi-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.kpi-card h3 {
+    margin: 8px 0 4px 0;
+    font-size: 1.8rem;
+    color: #3b2314;
+}
+
+.kpi-card small {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.table-container {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e5e0d8;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+.data-table th {
+    background-color: #f9f8f6;
+    padding: 14px 20px;
+    color: #555;
+    border-bottom: 1px solid #e5e0d8;
+    font-weight: 600;
+}
+
+.data-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0ece6;
+    color: #333;
+}
