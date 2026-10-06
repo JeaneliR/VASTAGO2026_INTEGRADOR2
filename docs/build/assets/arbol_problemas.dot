@@ -1,0 +1,19 @@
+digraph G { rankdir=BT; splines=line; nodesep=0.28; ranksep=0.7; bgcolor="white"; newrank=true;
+node [shape=box style="rounded,filled" fontname="Inter" fontsize=15 margin="0.16,0.11" color="#4A2C1F" penwidth=1.5];
+edge [color="#4A2C1F" arrowsize=0.9 penwidth=1.4];
+subgraph cluster_e { label="EFECTOS"; labeljust=l; fontname="Inter Bold" fontsize=14 fontcolor="#B3261E"; style="rounded,filled"; fillcolor="#FDF0EE"; color="#B3261E";
+  e1 [label="Sobrecostos por\ncompras urgentes" fillcolor="#FBE3E1"];
+  e2 [label="Lotes retrasados o\npedidos incumplidos" fillcolor="#FBE3E1"];
+  e3 [label="Sobreproducción,\nmermas y pérdidas" fillcolor="#FBE3E1"];
+  e4 [label="Decisiones gerenciales\ntardías y sin respaldo" fillcolor="#FBE3E1"]; }
+p [label="PROBLEMA CENTRAL\nGestión de insumos y producción sin información\noportuna, trazable ni predictiva en Vástago & Co" fillcolor="#FFF4CC" fontsize=16 color="#C89B3C" penwidth=2.4];
+subgraph cluster_c { label="CAUSAS"; labeljust=l; fontname="Inter Bold" fontsize=14 fontcolor="#2E7D4F"; style="rounded,filled"; fillcolor="#EEF6F0"; color="#2E7D4F";
+  c1 [label="Registros manuales\n(cuaderno, Excel)\nsin sistema integrado" fillcolor="#FFFDF9"];
+  c2 [label="Recetas en papel y\nconteo físico semanal\n(sin stock en tiempo real)" fillcolor="#FFFDF9"];
+  c3 [label="Sin histórico estructurado\nni pronóstico de demanda" fillcolor="#FFFDF9"];
+  c4 [label="Sin alertas ni\nregistro de responsables" fillcolor="#FFFDF9"]; }
+{rank=same; c1 -> c2 -> c3 -> c4 [style=invis];}
+{rank=same; e1 -> e2 -> e3 -> e4 [style=invis];}
+c1 -> p; c2 -> p; c3 -> p; c4 -> p;
+p -> e1; p -> e2; p -> e3; p -> e4;
+}

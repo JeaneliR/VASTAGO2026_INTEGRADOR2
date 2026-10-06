@@ -1,0 +1,18 @@
+digraph G { rankdir=TB; nodesep=0.3; ranksep=0.55; bgcolor="white"; pad=0.2;
+node [shape=box style="rounded,filled" fontname="Inter" fontsize=11 margin="0.14,0.09" width=2.3 color="#4A2C1F" fontcolor="#2E1B12"];
+edge [color="#4A2C1F" arrowsize=0.7 fontname="Inter" fontsize=9];
+a [label="1. Alcance\nEntorno local propio\n(autorizado)" fillcolor="#E4EEF9"];
+b [label="2. Reconocimiento\nnmap -sV, scripts\nhttp-headers/methods" fillcolor="#E8F3EC"];
+c [label="3. Configuración\nnikto, tls (nmap\nssl-enum-ciphers)" fillcolor="#E8F3EC"];
+d [label="4. Explotación\nsqlmap + pentest_manual.py\n(20 verificaciones)" fillcolor="#FFF4CC"];
+e [label="5. Código y dependencias\nbandit, pip-audit,\nnpm audit, pytest" fillcolor="#FBF0D6"];
+f [label="6. Triaje\nclasificar y priorizar" fillcolor="#F3E4C4"];
+g [label="7. Corrección\ncódigo / configuración" fillcolor="#FBE3E1"];
+h [label="8. Re-prueba\nmismas herramientas\n(antes / después)" fillcolor="#E8F3EC"];
+{rank=same; a; b; c}
+{rank=same; d; e; f}
+{rank=same; g; h}
+a->b->c; d->e->f; g->h;
+c->d [constraint=true]; f->g [constraint=true];
+h->f [label=" si persiste" style=dashed constraint=false];
+}

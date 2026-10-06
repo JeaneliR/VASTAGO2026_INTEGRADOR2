@@ -1,0 +1,15 @@
+# Secretos y entorno local (NUNCA subir)
+.env
+*.dump
+backups/
+
+# Dependencias y artefactos de compilación
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/static/
+docs/build/out/
+docs/build/.registry.json
+docs/build/.headings.json
+docs/build/.toc.json

@@ -1,0 +1,19 @@
+digraph G { rankdir=TB; splines=true; nodesep=0.35; ranksep=0.5; compound=true; bgcolor="white";
+node [shape=box style="rounded,filled" fillcolor="#FFFDF9" color="#4A2C1F" fontname="Inter" fontsize=11 margin="0.14,0.08"]; edge [color="#4A2C1F" fontname="Inter" fontsize=11 fontsize=9 arrowsize=0.8];
+subgraph cluster_a { label="Compras / Almacén"; style="rounded,filled"; fillcolor="#F6EFE3"; color="#4A2C1F"; fontname="Inter" fontsize=11
+  a1 [label="Compra de cacao,\nmanteca y empaques\n(por llamada / WhatsApp)"];
+  a2 [label="Recepción: se anota\nen cuaderno o Excel"];
+  a3 [label="Conteo físico\nsemanal manual"]; }
+subgraph cluster_p { label="Producción (Jefe de producción)"; style="rounded,filled"; fillcolor="#F6EFE3"; color="#4A2C1F"; fontname="Inter" fontsize=11
+  p1 [label="Planifica lotes\n\"por experiencia\""];
+  p2 [label="Receta en papel:\ncalcula insumos a mano"];
+  p3 [label="Elabora el lote\ny anota la merma\nal final del día"]; }
+subgraph cluster_g { label="Gerencia / Ventas"; style="rounded,filled"; fillcolor="#F6EFE3"; color="#4A2C1F"; fontname="Inter" fontsize=11
+  g1 [label="Ventas por pedido\n(sin proyección)"];
+  g2 [label="Reunión mensual:\nrevisa hojas de cálculo"]; }
+d1 [shape=diamond style=filled fillcolor="#FBE3E1" color="#B3261E" label="¿Falta\ninsumo?"];
+d2 [label="Compra urgente\n(sobrecosto)" fillcolor="#FBE3E1" color="#B3261E"];
+a1 -> a2 -> a3 -> p1 -> p2 -> d1; d1 -> p3 [label="No"]; d1 -> d2 [label="Sí"]; d2 -> a1 [constraint=false, style=dashed];
+p3 -> g1 -> g2;
+n1 [shape=note style=filled fillcolor="#FFF4CC" color="#C89B3C" label="Problemas detectados\n① Stock desactualizado\n② Sin alertas de mínimos\n③ Demanda no proyectada\n④ Merma sin trazabilidad\n⑤ Sin registro de quién hizo qué"];
+}

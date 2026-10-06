@@ -1,0 +1,32 @@
+### Cabeceras sobre HTTPS (modo producción: HSTS + cookie Secure)
+HTTP/1.1 200 OK
+X-Frame-Options: DENY
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Cache-Control: no-store
+
+### nmap ssl-enum-ciphers
+8443/tcp open  https-alt
+| ssl-enum-ciphers: 
+|   TLSv1.2: 
+|     ciphers: 
+|       TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (ecdh_x25519) - A
+|       TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (ecdh_x25519) - A
+|       TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (ecdh_x25519) - A
+|       TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 (ecdh_x25519) - A
+|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 (ecdh_x25519) - A
+|     compressors: 
+|       NULL
+|     cipher preference: server
+|   TLSv1.3: 
+|     ciphers: 
+|       TLS_AKE_WITH_AES_256_GCM_SHA384 (ecdh_x25519) - A
+|       TLS_AKE_WITH_CHACHA20_POLY1305_SHA256 (ecdh_x25519) - A
+|       TLS_AKE_WITH_AES_128_GCM_SHA256 (ecdh_x25519) - A
+|     cipher preference: server
+|_  least strength: A
+
+Nmap done: 1 IP address (1 host up) scanned in 0.34 seconds
+### openssl s_client
+Verification error: self-signed certificate
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384

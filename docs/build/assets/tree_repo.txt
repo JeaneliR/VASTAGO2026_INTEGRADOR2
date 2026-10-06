@@ -1,0 +1,56 @@
+vastago-sistema/
+├── .github/
+│   └── workflows/   # ci.yml
+├── backend/
+│   ├── app/
+│   │   ├── repositories/   # __init__.py, analitica.py, base.py, inventario.py, produccion.py, usuarios.py
+│   │   ├── routes/   # __init__.py, auth.py, negocio.py
+│   │   ├── services/   # __init__.py, auth_service.py
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── db.py
+│   │   ├── extensions.py
+│   │   ├── security.py
+│   │   └── seed.py
+│   ├── static/   # bundle compilado por esbuild (no versionado)
+│   ├── tests/   # conftest.py, pentest_manual.py, test_negocio.py, test_seguridad.py
+│   ├── gunicorn.conf.py
+│   ├── requirements.txt
+│   └── wsgi.py
+├── db/
+│   ├── admin/   # backup_restore.sh, monitoreo.sql
+│   ├── replication/   # 01_primary_config.sql, setup_replica.sh
+│   ├── schema.sql
+│   └── seed_catalogo.sql
+├── deploy/
+├── docs/
+│   └── build/   # generador del informe (gen.js, capN.js) y assets/ con diagramas y prototipos
+├── evidencias/
+│   ├── capturas/   # 12 capturas de pantalla por rol (PNG)
+│   ├── seguridad/   # salidas de nmap, nikto, sqlmap, bandit, pip-audit, pentest, TLS
+│   ├── wpo/   # medir_wpo.py, wpo_metricas.json
+│   ├── 01_replicacion.txt
+│   ├── 02_respaldo_restauracion.txt
+│   ├── 03_monitoreo_bd.txt
+│   ├── 04_pytest.txt
+│   ├── 05_cobertura.txt
+│   ├── 05_latencia_api.txt
+│   └── medir_latencia.py
+├── frontend/
+│   ├── public/   # index.html
+│   ├── src/
+│   │   ├── components/   # Admin.jsx, Analitica.jsx, Dashboard.jsx, Inventario.jsx, Login.jsx, Produccion.jsx
+│   │   ├── api.js
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── build.mjs
+│   ├── package-lock.json
+│   └── package.json
+├── ml-service/   # forecast.py, forecast_output.json, historico_demanda.csv
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── Dockerfile
+├── README.md
+└── render.yaml

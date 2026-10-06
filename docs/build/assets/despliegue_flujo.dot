@@ -1,0 +1,16 @@
+digraph G { rankdir=TB; nodesep=0.35; ranksep=0.4; bgcolor="white"; node [shape=box style="rounded,filled" fillcolor="#FFFDF9" color="#4A2C1F" fontname="Inter" fontsize=11 margin="0.14,0.08"]; edge [color="#4A2C1F" fontname="Inter" fontsize=9 arrowsize=0.8];
+dev [label="Equipo\n(git push a main)" shape=ellipse fillcolor="#FAF3E7"];
+gh [label="GitHub\nVASTAGO2026_INTEGRADOR2\nrender.yaml · Dockerfile" shape=component fillcolor="#FAF3E7"];
+subgraph cluster_r { label="Render (cuenta del equipo)"; style="rounded,filled"; fillcolor="#F6EFE3"; color="#4A2C1F"; fontname="Inter" fontsize=11
+  bp [label="1. Blueprint\nlee render.yaml"];
+  db [label="2. PostgreSQL 16 gestionado\nvastago-db (plan free)" shape=cylinder fillcolor="#E4EEF9"];
+  build [label="3. Build Docker\netapa 1: npm ci + esbuild\netapa 2: pip + gunicorn"];
+  start [label="4. Arranque\nseed --if-empty →\ngunicorn (PORT)"];
+  hc [label="5. Health check\nGET /api/health = 200" fillcolor="#E4F3E9"];
+  lb [label="Balanceador\nTLS gestionado (HTTPS)" fillcolor="#FFF4CC"];
+  env [label="Variables de entorno\nDATABASE_URL (de la BD)\nJWT_SECRET · FIELD_ENCRYPTION_KEY (generadas)\nDEMO_PASSWORD (la define el equipo)\nAPP_ENV=production" shape=note fillcolor="#FFFDF9"];
+}
+user [label="Usuarios\n(navegador)" shape=ellipse fillcolor="#FAF3E7"];
+dev -> gh; gh -> bp [label="webhook /\nNew → Blueprint"]; bp -> db; bp -> build; db -> env [style=dashed arrowhead=none]; env -> start [style=dashed];
+build -> start; start -> hc; hc -> lb [label="tráfico solo si\nel check pasa"]; lb -> user [dir=both label="HTTPS"]; start -> db [label="SQL\n(red interna)" style=dashed constraint=false];
+}

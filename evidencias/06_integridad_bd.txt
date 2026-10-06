@@ -1,0 +1,23 @@
+### Pruebas de integridad de la BD (R10 y R3) — cada bloque se revierte con ROLLBACK, no altera datos
+### Rol de conexión: vastago_app (sin privilegios de superusuario)
+
+-- 1) Intento de dejar stock negativo con UPDATE directo
+BEGIN;
+UPDATE insumos SET stock_actual = -1 WHERE nombre = 'Lecitina de soya';
+ERROR:  new row for relation "insumos" violates check constraint "insumos_stock_actual_check"
+ROLLBACK;
+
+-- 2) Salida de 999999 unidades vía movimiento (el trigger intenta restar y el CHECK lo impide)
+BEGIN;
+INSERT INTO movimientos_inventario (insumo_id, tipo, cantidad, motivo, usuario_id)
+  SELECT id, 'SALIDA', 999999, 'prueba de integridad', 1 FROM insumos WHERE nombre='Lecitina de soya';
+ERROR:  new row for relation "insumos" violates check constraint "insumos_stock_actual_check"
+CONTEXT:  PL/pgSQL function fn_aplicar_movimiento() line 7 at SQL statement
+ROLLBACK;
+
+-- 3) Intento de borrar un registro de auditoría
+BEGIN;
+DELETE FROM auditoria WHERE id = 1;
+ERROR:  La tabla auditoria es de solo lectura/anexado
+CONTEXT:  PL/pgSQL function fn_bloquear_auditoria() line 3 at RAISE
+ROLLBACK;

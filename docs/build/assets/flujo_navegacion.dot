@@ -1,0 +1,8 @@
+digraph G { rankdir=LR; nodesep=0.3; ranksep=0.5; bgcolor="white"; node [shape=box style="rounded,filled" fillcolor="#FFFDF9" color="#4A2C1F" fontname="Inter" fontsize=11 margin="0.14,0.08"]; edge [color="#4A2C1F" fontname="Inter" fontsize=11 fontsize=9 arrowsize=0.8];
+login [label="Login\n(correo + contraseña)" fillcolor="#FFF4CC"]; err [label="Mensaje genérico /\nbloqueo tras 5 intentos" fillcolor="#FBE3E1" color="#B3261E"];
+dash [label="Dashboard\n(KPIs + alertas)"]; inv [label="Inventario\n(Admin, Jefe, Almacenero)"]; mov [label="Modal: registrar\ningreso / salida"];
+prod [label="Producción\n(todos los roles ven)"]; ord [label="Modal: nueva orden\n+ vista previa BOM"]; ana [label="Analítica IA\n(Admin, Jefe, Gerente)"];
+usr [label="Usuarios\n(solo Administrador)"]; aud [label="Auditoría\n(solo Administrador)"]; out [label="Cerrar sesión" fillcolor="#FAF3E7"];
+login -> dash [label="éxito"]; login -> err [label="falla"]; err -> login;
+dash -> inv; dash -> prod; dash -> ana; dash -> usr; dash -> aud; inv -> mov; prod -> ord; dash -> out;
+}

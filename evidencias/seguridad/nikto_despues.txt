@@ -1,0 +1,11 @@
+- Nikto v2.1.5/2.1.5
++ Target Host: localhost
++ Target Port: 8000
++ GET /: Uncommon header 'x-frame-options' found, with contents: DENY
++ GET /: Uncommon header 'x-content-type-options' found, with contents: nosniff
++ GET /: Uncommon header 'referrer-policy' found, with contents: no-referrer
++ GET /: Uncommon header 'permissions-policy' found, with contents: geolocation=(), microphone=(), camera=()
++ GET /: Uncommon header 'content-disposition' found, with contents: inline
++ GET /: Uncommon header 'cross-origin-opener-policy' found, with contents: same-origin
++ GET /: Uncommon header 'content-security-policy' found, with contents: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
++ OPTIONS /: Allowed HTTP Methods: GET, HEAD, OPTIONS 

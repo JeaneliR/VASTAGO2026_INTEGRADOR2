@@ -1,0 +1,49 @@
+# UAT de la interfaz por rol (Playwright + Chromium) — 2026-10-06 01:13:34 UTC
+# Servicio: gunicorn APP_ENV=production :8100 contra PostgreSQL 16 :5433 (BD vastago_smoke)
+# Comando: python evidencias/uat_ui.py http://127.0.0.1:8100 <DEMO_PASSWORD>
+
+[PASA ] UAT01  Jefe de Producción: menú = Dashboard, Inventario, Producción, Analítica IA
+           menú: Dashboard, Inventario, Producción, Analítica IA
+[PASA ] UAT02  Jefe de Producción: Inventario es de solo lectura (botón 'Ver historial', sin 'Registrar movimiento')
+           stock inicial de cacao en grano: 1,240 kg
+[PASA ] UAT03  Nueva orden: la vista previa del BOM calcula el consumo (100 u × 0.065 kg = 6.5 kg de cacao)
+           vista previa: Azúcar orgánica: 3.0 kg; Cacao en grano (San Martín): 6.5 kg; Empaque tableta 100g: 100.0 unid.; Manteca de cacao: 1.8 kg
+[PASA ] UAT04  La orden creada aparece al inicio con lote correlativo y estado Planificada
+           L-2026-018 · Planificada
+[PASA ] UAT05  Iniciar: la orden pasa a 'En proceso'
+           En proceso
+           diálogo de confirmación: Completar L-2026-018 descontará los insumos del inventario. ¿Continuar?
+[PASA ] UAT06  Completar (con confirmación): estado 'Completada' y sin más botones
+           Completada
+[PASA ] UAT07  Al completar, el inventario descontó 6.5 kg de cacao
+           cacao en grano: 1,240 kg → 1,233.5 kg
+[PASA ] UAT08  Almacenero: menú = Dashboard, Inventario, Producción
+           menú: Dashboard, Inventario, Producción
+[PASA ] UAT09  Ingreso de 100 kg: el stock sube y el semáforo pasa de Crítico a OK
+           leche en polvo: 95 kg (Crítico) → 195 kg (OK)
+[PASA ] UAT10  Salida mayor al stock: mensaje claro y el stock no cambia
+           mensaje en pantalla: «Stock insuficiente»
+[PASA ] UAT11  Almacenero: en Producción solo consulta (sin botón '+ Nueva orden' ni acciones de estado)
+           botones de escritura: 0
+[PASA ] UAT12  Gerente: menú = Dashboard, Producción, Analítica IA (sin Inventario)
+           menú: Dashboard, Producción, Analítica IA
+[PASA ] UAT13  Analítica: al cambiar de producto se actualiza el MAPE y se listan 3 meses proyectados
+           MAPE 4.5% → 2.1%; filas de pronóstico: 3
+[PASA ] UAT14  Administrador: ve los 6 módulos (incluye Usuarios y Auditoría)
+           menú: Dashboard, Inventario, Producción, Analítica IA, Usuarios, Auditoría
+[PASA ] UAT15  Contraseña débil rechazada con mensaje que indica qué falta
+           mensaje: «Contraseña débil: falta mínimo 10 caracteres, una mayúscula, un número, un símbolo»
+[PASA ] UAT16  Usuario válido creado y listado como Activo
+           5 usuarios en la lista
+[PASA ] UAT17  Desactivar usuario: el estado cambia a Inactivo
+           estado: Inactivo
+[PASA ] UAT18  Auditoría registra la creación y el cambio de estado del usuario y los movimientos del flujo UAT
+           acciones visibles: ACCESO_DENEGADO, LOGIN_FALLIDO, LOGIN_OK, MOVIMIENTO_INGRESO, MOVIMIENTO_SALIDA, ORDEN_CREADA, ORDEN_ESTADO, USUARIO_CREADO, USUARIO_ESTADO
+[PASA ] UAT19  Recargar la página (F5) mantiene la sesión mediante la cookie de refresh
+           sesión restaurada
+[PASA ] UAT20  Cerrar sesión devuelve al login
+           formulario de ingreso visible
+[PASA ] UAT21  Tras cerrar sesión, recargar NO restaura la sesión (refresh revocado)
+           login visible
+
+Resumen: 21/21 verificaciones superadas  (URL: http://127.0.0.1:8100)

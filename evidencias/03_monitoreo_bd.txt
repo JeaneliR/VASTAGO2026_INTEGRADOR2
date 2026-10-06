@@ -1,0 +1,68 @@
+### Monitoreo y administración de la BD (db/admin/monitoreo.sql)
+=== 1. Conexiones activas por estado
+ state  | count 
+--------+-------
+ active |     1
+(1 row)
+
+=== 2. Tamaño de la base y de cada tabla
+ tamano_bd 
+-----------
+ 9071 kB
+(1 row)
+
+         tabla          | tamano_total | filas 
+------------------------+--------------+-------
+ auditoria              | 96 kB        |    85
+ sesiones               | 88 kB        |    66
+ usuarios               | 64 kB        |     5
+ ordenes_produccion     | 56 kB        |     6
+ insumos                | 40 kB        |     7
+ productos              | 40 kB        |     3
+ movimientos_inventario | 40 kB        |     5
+ roles                  | 40 kB        |     4
+(8 rows)
+
+=== 3. Ratio de aciertos de caché (objetivo > 99%)
+ cache_hit_pct | commits | rollbacks | deadlocks 
+---------------+---------+-----------+-----------
+         99.92 |     472 |        11 |         0
+(1 row)
+
+=== 4. Uso de índices
+       tabla        |         indice          | usos 
+--------------------+-------------------------+------
+ usuarios           | usuarios_pkey           |  235
+ productos          | productos_pkey          |   99
+ roles              | roles_pkey              |   79
+ insumos            | insumos_pkey            |   28
+ productos          | productos_nombre_key    |    8
+ ordenes_produccion | ordenes_produccion_pkey |    5
+ roles              | roles_nombre_key        |    5
+ sesiones           | sesiones_token_hash_key |    3
+(8 rows)
+
+=== 5. Dead tuples / último autovacuum
+        relname         | n_dead_tup | last_autovacuum |       last_autoanalyze        
+------------------------+------------+-----------------+-------------------------------
+ usuarios               |         10 |                 | 2026-10-06 00:21:38.487522+00
+ insumos                |          6 |                 | 
+ sesiones               |          2 |                 | 2026-10-06 00:21:38.491164+00
+ ordenes_produccion     |          1 |                 | 
+ movimientos_inventario |          0 |                 | 
+(5 rows)
+
+=== 6. Roles y privilegios (principio de mínimo privilegio)
+   rolname   | rolsuper | rolcreatedb | rolreplication | rolcanlogin 
+-------------+----------+-------------+----------------+-------------
+ postgres    | t        | t           | t              | t
+ replicator  | f        | f           | t              | t
+ vastago_app | f        | f           | f              | t
+(3 rows)
+
+=== 7. Cifrado de contraseñas del servidor
+ password_encryption 
+---------------------
+ scram-sha-256
+(1 row)
+

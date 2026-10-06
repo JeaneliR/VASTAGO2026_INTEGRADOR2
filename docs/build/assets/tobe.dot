@@ -1,0 +1,21 @@
+digraph G { rankdir=TB; splines=true; nodesep=0.35; ranksep=0.5; compound=true; bgcolor="white";
+node [shape=box style="rounded,filled" fillcolor="#FFFDF9" color="#4A2C1F" fontname="Inter" fontsize=11 margin="0.14,0.08"]; edge [color="#4A2C1F" fontname="Inter" fontsize=11 fontsize=9 arrowsize=0.8];
+subgraph cluster_a { label="Almacenero"; style="rounded,filled"; fillcolor="#E8F3EC"; color="#2E7D4F"; fontname="Inter" fontsize=11
+  a1 [label="Inicia sesión\n(rol Almacenero)"];
+  a2 [label="Registra ingreso/salida\nen el sistema"]; }
+subgraph cluster_s { label="Sistema Web Inteligente (automático)"; style="rounded,filled"; fillcolor="#FFF8E6"; color="#C89B3C"; fontname="Inter" fontsize=11
+  s1 [label="Trigger BD actualiza\nstock en tiempo real"];
+  s2 [label="Evalúa stock mínimo\ny genera alertas\n(WhatsApp / correo)"];
+  s3 [label="Modelo ML pronostica\ndemanda de 3 meses"];
+  s5 [label="Descuenta insumos\nsegún receta (BOM)"];
+  s6 [label="Auditoría de cada\nacción (usuario, fecha, IP)"]; }
+subgraph cluster_p { label="Jefe de producción"; style="rounded,filled"; fillcolor="#E8F3EC"; color="#2E7D4F"; fontname="Inter" fontsize=11
+  p1 [label="Consulta alertas y\npronóstico"];
+  p2 [label="Crea orden de producción\ncon vista previa de insumos"];
+  p3 [label="Completa la orden\n(consumo automático)"]; }
+subgraph cluster_g { label="Gerencia"; style="rounded,filled"; fillcolor="#E8F3EC"; color="#2E7D4F"; fontname="Inter" fontsize=11
+  g1 [label="Dashboard de KPIs\n(quiebres, merma,\nprecisión IA)"]; }
+a1 -> a2 -> s1 -> s2 -> p1 -> p2 -> p3 -> s5; s5 -> s1 [style=dashed constraint=false];
+s3 -> p1 [constraint=false];  s2 -> g1 [constraint=false]; s5 -> g1; s1 -> s6 [style=dotted]; 
+n1 [shape=note style=filled fillcolor="#E4F3E9" color="#2E7D4F" label="Mejoras logradas\n✔ Stock en tiempo real\n✔ Alertas automáticas\n✔ Producción guiada por pronóstico\n✔ Trazabilidad completa\n✔ Acceso por roles"];
+}

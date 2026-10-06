@@ -1,0 +1,12 @@
+### Tiempos de respaldo y restauración (06-oct-2026), BD vastago con 5 movimientos y 86 eventos de auditoría
+pg_dump -Fc -Z 6: 0.12 s, 42458 bytes
+pg_restore: 0.13 s
+usuarios                   original=5 restaurada=5 OK
+insumos                    original=7 restaurada=7 OK
+ordenes_produccion         original=6 restaurada=6 OK
+movimientos_inventario     original=5 restaurada=5 OK
+auditoria                  original=87 restaurada=87 OK
+sesiones                   original=68 restaurada=68 OK
+pronosticos                original=9 restaurada=9 OK
+demanda_historica          original=72 restaurada=72 OK
+objetos restaurados: tablas=12, triggers=2, vista v_inventario=1

@@ -1,0 +1,33 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/claude/vastago-sistema/backend
+plugins: anyio-4.15.1
+collecting ... collected 24 items
+
+tests/test_negocio.py::test_inventario_lista_con_estado PASSED           [  4%]
+tests/test_negocio.py::test_ingreso_actualiza_stock_via_trigger PASSED   [  8%]
+tests/test_negocio.py::test_salida_mayor_al_stock_rechazada PASSED       [ 12%]
+tests/test_negocio.py::test_validacion_de_cantidades PASSED              [ 16%]
+tests/test_negocio.py::test_crear_orden_y_completar_descuenta_bom PASSED [ 20%]
+tests/test_negocio.py::test_bom_de_producto PASSED                       [ 25%]
+tests/test_negocio.py::test_kpis_y_alertas PASSED                        [ 29%]
+tests/test_negocio.py::test_forecast_estructura PASSED                   [ 33%]
+tests/test_seguridad.py::test_login_correcto_devuelve_token_y_cookie_httponly PASSED [ 37%]
+tests/test_seguridad.py::test_login_incorrecto_mensaje_generico PASSED   [ 41%]
+tests/test_seguridad.py::test_sin_token_401 PASSED                       [ 45%]
+tests/test_seguridad.py::test_token_manipulado_o_alg_none_rechazado PASSED [ 50%]
+tests/test_seguridad.py::test_token_expirado PASSED                      [ 54%]
+tests/test_seguridad.py::test_escalada_de_privilegios_bloqueada_por_rol PASSED [ 58%]
+tests/test_seguridad.py::test_bloqueo_por_intentos_fallidos PASSED       [ 62%]
+tests/test_seguridad.py::test_refresh_rota_el_token_y_detecta_reutilizacion PASSED [ 66%]
+tests/test_seguridad.py::test_refresh_sin_cabecera_csrf_rechazado PASSED [ 70%]
+tests/test_seguridad.py::test_logout_revoca_sesion PASSED                [ 75%]
+tests/test_seguridad.py::test_politica_de_contrasenas_y_hash_bcrypt PASSED [ 79%]
+tests/test_seguridad.py::test_cifrado_aes_gcm_ida_y_vuelta_y_manipulacion PASSED [ 83%]
+tests/test_seguridad.py::test_inyeccion_sql_no_funciona PASSED           [ 87%]
+tests/test_seguridad.py::test_cabeceras_de_seguridad PASSED              [ 91%]
+tests/test_seguridad.py::test_errores_sin_traza PASSED                   [ 95%]
+tests/test_seguridad.py::test_auditoria_registra_y_es_inmutable PASSED   [100%]
+
+============================== 24 passed in 1.32s ==============================

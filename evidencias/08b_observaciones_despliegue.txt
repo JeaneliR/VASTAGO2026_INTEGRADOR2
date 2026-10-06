@@ -1,0 +1,20 @@
+# Observaciones adicionales de despliegue local — 2026-10-06 01:14:33 UTC
+## Puertos en escucha (lsof -iTCP -sTCP:LISTEN). Nota: el puerto 8000 no estaba en uso; el servicio de desarrollo corre en 8200 y el de esta prueba en 8100
+COMMAND PID NAME 
+postgres 437 127.0.0.1:5433 (LISTEN)
+gunicorn 541 *:8200 (LISTEN)
+gunicorn 547 *:8200 (LISTEN)
+gunicorn 548 *:8200 (LISTEN)
+gunicorn 3397 *:8100 (LISTEN)
+gunicorn 3399 *:8100 (LISTEN)
+gunicorn 3400 *:8100 (LISTEN)
+
+## Procesos gunicorn del servicio :8100 (maestro + 2 workers)
+ 3397     1 /usr/bin/python3 /usr/local/bin/gunicorn -c gunicorn.conf.py wsgi:app
+ 3399  3397 /usr/bin/python3 /usr/local/bin/gunicorn -c gunicorn.conf.py wsgi:app
+ 3400  3397 /usr/bin/python3 /usr/local/bin/gunicorn -c gunicorn.conf.py wsgi:app
+
+## IP registrada en auditoria con X-Forwarded-For (escenario detras del balanceador de Render)
+login gerente con X-Forwarded-For: 203.0.113.77 -> HTTP 200
+ultimo LOGIN_OK de gerente@vastagoyco.pe -> ip registrada: 127.0.0.1
+Conclusion: Flask/gunicorn registran la IP del par TCP (REMOTE_ADDR) y no X-Forwarded-For; detras de Render seria la IP del balanceador (limitacion abierta, ver 10.2)

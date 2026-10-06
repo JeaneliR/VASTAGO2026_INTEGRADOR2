@@ -1,0 +1,6 @@
+Latencia API local (loopback, gunicorn 2 workers, 300 solicitudes por endpoint), puerto 8000
+/api/health      n=300 p50=0.8 p95=3.2 p99=8.6 max=28.1 ms
+/api/kpis        n=300 p50=1.8 p95=2.8 p99=4.8 max=7.8 ms
+/api/alertas     n=300 p50=1.5 p95=2.9 p99=6.1 max=7.9 ms
+/api/produccion  n=300 p50=1.4 p95=1.8 p99=2.3 max=5.6 ms
+/api/forecast    n=300 p50=2.3 p95=2.9 p99=3.7 max=5.2 ms

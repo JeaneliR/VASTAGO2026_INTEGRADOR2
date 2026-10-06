@@ -1,0 +1,191 @@
+# Nmap 7.94SVN scan initiated Tue Oct  6 00:25:39 2026 as: nmap -sV -p 8000,5433,5434 --script http-headers,http-methods,http-security-headers -oN nmap.txt 127.0.0.1
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000047s latency).
+
+PORT     STATE SERVICE    VERSION
+5433/tcp open  postgresql PostgreSQL DB 9.6.0 or later
+| fingerprint-strings: 
+|   Kerberos: 
+|     SFATAL
+|     VFATAL
+|     C0A000
+|     Munsupported frontend protocol 27265.28208: server supports 3.0 to 3.0
+|     Fpostmaster.c
+|     L2169
+|     RProcessStartupPacket
+|   SMBProgNeg: 
+|     SFATAL
+|     VFATAL
+|     C0A000
+|     Munsupported frontend protocol 65363.19778: server supports 3.0 to 3.0
+|     Fpostmaster.c
+|     L2169
+|_    RProcessStartupPacket
+5434/tcp open  postgresql PostgreSQL DB 9.6.0 or later
+| fingerprint-strings: 
+|   Kerberos: 
+|     SFATAL
+|     VFATAL
+|     C0A000
+|     Munsupported frontend protocol 27265.28208: server supports 3.0 to 3.0
+|     Fpostmaster.c
+|     L2169
+|     RProcessStartupPacket
+|   SMBProgNeg: 
+|     SFATAL
+|     VFATAL
+|     C0A000
+|     Munsupported frontend protocol 65363.19778: server supports 3.0 to 3.0
+|     Fpostmaster.c
+|     L2169
+|_    RProcessStartupPacket
+8000/tcp open  http-alt   gunicorn
+| http-methods: 
+|_  Supported Methods: HEAD GET OPTIONS
+|_http-server-header: gunicorn
+| http-headers: 
+|   Server: gunicorn
+|   Date: Tue, 06 Oct 2026 00:27:35 GMT
+|   Connection: close
+|   Content-Disposition: inline; filename=index.html
+|   Content-Type: text/html; charset=utf-8
+|   Content-Length: 444
+|   Last-Modified: Tue, 06 Oct 2026 00:24:37 GMT
+|   Cache-Control: no-cache
+|   ETag: "1791246277.5069332-444-811734165"
+|   Accept-Ranges: bytes
+|   X-Content-Type-Options: nosniff
+|   X-Frame-Options: DENY
+|   Referrer-Policy: no-referrer
+|   Permissions-Policy: geolocation=(), microphone=(), camera=()
+|   Cross-Origin-Opener-Policy: same-origin
+|   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+|   
+|_  (Request type: HEAD)
+| fingerprint-strings: 
+|   FourOhFourRequest: 
+|     HTTP/1.0 200 OK
+|     Server: gunicorn
+|     Date: Tue, 06 Oct 2026 00:25:50 GMT
+|     Connection: close
+|     Content-Disposition: inline; filename=index.html
+|     Content-Type: text/html; charset=utf-8
+|     Content-Length: 444
+|     Last-Modified: Tue, 06 Oct 2026 00:24:37 GMT
+|     Cache-Control: no-cache
+|     ETag: "1791246277.5069332-444-811734165"
+|     Accept-Ranges: bytes
+|     X-Content-Type-Options: nosniff
+|     X-Frame-Options: DENY
+|     Referrer-Policy: no-referrer
+|     Permissions-Policy: geolocation=(), microphone=(), camera=()
+|     Cross-Origin-Opener-Policy: same-origin
+|     Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+|     <!DOCTYPE html>
+|     <html lang="es">
+|     <head>
+|     <meta charset="UTF-8">
+|     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+|     <title>V
+|     stago &amp; Co | Sistema de
+|   GenericLines: 
+|     HTTP/1.1 400 Bad Request
+|     Connection: close
+|     Content-Type: text/html
+|     Content-Length: 193
+|     <html>
+|     <head>
+|     <title>Bad Request</title>
+|     </head>
+|     <body>
+|     <h1><p>Bad Request</p></h1>
+|     Invalid Request Line &#x27;Invalid HTTP request line: &#x27;&#x27;&#x27;
+|     </body>
+|     </html>
+|   GetRequest: 
+|     HTTP/1.0 200 OK
+|     Server: gunicorn
+|     Date: Tue, 06 Oct 2026 00:25:45 GMT
+|     Connection: close
+|     Content-Disposition: inline; filename=index.html
+|     Content-Type: text/html; charset=utf-8
+|     Content-Length: 444
+|     Last-Modified: Tue, 06 Oct 2026 00:24:37 GMT
+|     Cache-Control: no-cache
+|     ETag: "1791246277.5069332-444-811734165"
+|     Accept-Ranges: bytes
+|     X-Content-Type-Options: nosniff
+|     X-Frame-Options: DENY
+|     Referrer-Policy: no-referrer
+|     Permissions-Policy: geolocation=(), microphone=(), camera=()
+|     Cross-Origin-Opener-Policy: same-origin
+|     Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+|     <!DOCTYPE html>
+|     <html lang="es">
+|     <head>
+|     <meta charset="UTF-8">
+|     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+|     <title>V
+|_    stago &amp; Co | Sistema de
+3 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port5433-TCP:V=7.94SVN%I=7%D=10/6%Time=6AC44009%P=x86_64-pc-linux-gnu%r
+SF:(Kerberos,8C,"E\0\0\0\x8bSFATAL\0VFATAL\0C0A000\0Munsupported\x20fronte
+SF:nd\x20protocol\x2027265\.28208:\x20server\x20supports\x203\.0\x20to\x20
+SF:3\.0\0Fpostmaster\.c\0L2169\0RProcessStartupPacket\0\0")%r(SMBProgNeg,8
+SF:C,"E\0\0\0\x8bSFATAL\0VFATAL\0C0A000\0Munsupported\x20frontend\x20proto
+SF:col\x2065363\.19778:\x20server\x20supports\x203\.0\x20to\x203\.0\0Fpost
+SF:master\.c\0L2169\0RProcessStartupPacket\0\0");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port5434-TCP:V=7.94SVN%I=7%D=10/6%Time=6AC44009%P=x86_64-pc-linux-gnu%r
+SF:(Kerberos,8C,"E\0\0\0\x8bSFATAL\0VFATAL\0C0A000\0Munsupported\x20fronte
+SF:nd\x20protocol\x2027265\.28208:\x20server\x20supports\x203\.0\x20to\x20
+SF:3\.0\0Fpostmaster\.c\0L2169\0RProcessStartupPacket\0\0")%r(SMBProgNeg,8
+SF:C,"E\0\0\0\x8bSFATAL\0VFATAL\0C0A000\0Munsupported\x20frontend\x20proto
+SF:col\x2065363\.19778:\x20server\x20supports\x203\.0\x20to\x203\.0\0Fpost
+SF:master\.c\0L2169\0RProcessStartupPacket\0\0");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port8000-TCP:V=7.94SVN%I=7%D=10/6%Time=6AC44009%P=x86_64-pc-linux-gnu%r
+SF:(GenericLines,11E,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x2
+SF:0close\r\nContent-Type:\x20text/html\r\nContent-Length:\x20193\r\n\r\n<
+SF:html>\n\x20\x20<head>\n\x20\x20\x20\x20<title>Bad\x20Request</title>\n\
+SF:x20\x20</head>\n\x20\x20<body>\n\x20\x20\x20\x20<h1><p>Bad\x20Request</
+SF:p></h1>\n\x20\x20\x20\x20Invalid\x20Request\x20Line\x20&#x27;Invalid\x2
+SF:0HTTP\x20request\x20line:\x20&#x27;&#x27;&#x27;\n\x20\x20</body>\n</htm
+SF:l>\n")%r(GetRequest,495,"HTTP/1\.0\x20200\x20OK\r\nServer:\x20gunicorn\
+SF:r\nDate:\x20Tue,\x2006\x20Oct\x202026\x2000:25:45\x20GMT\r\nConnection:
+SF:\x20close\r\nContent-Disposition:\x20inline;\x20filename=index\.html\r\
+SF:nContent-Type:\x20text/html;\x20charset=utf-8\r\nContent-Length:\x20444
+SF:\r\nLast-Modified:\x20Tue,\x2006\x20Oct\x202026\x2000:24:37\x20GMT\r\nC
+SF:ache-Control:\x20no-cache\r\nETag:\x20\"1791246277\.5069332-444-8117341
+SF:65\"\r\nAccept-Ranges:\x20bytes\r\nX-Content-Type-Options:\x20nosniff\r
+SF:\nX-Frame-Options:\x20DENY\r\nReferrer-Policy:\x20no-referrer\r\nPermis
+SF:sions-Policy:\x20geolocation=\(\),\x20microphone=\(\),\x20camera=\(\)\r
+SF:\nCross-Origin-Opener-Policy:\x20same-origin\r\nContent-Security-Policy
+SF::\x20default-src\x20'self';\x20script-src\x20'self';\x20style-src\x20's
+SF:elf'\x20'unsafe-inline';\x20img-src\x20'self'\x20data:;\x20connect-src\
+SF:x20'self';\x20frame-ancestors\x20'none';\x20base-uri\x20'self';\x20form
+SF:-action\x20'self'\r\n\r\n<!DOCTYPE\x20html>\n<html\x20lang=\"es\">\n<he
+SF:ad>\n<meta\x20charset=\"UTF-8\">\n<meta\x20name=\"viewport\"\x20content
+SF:=\"width=device-width,\x20initial-scale=1\.0\">\n<title>V\xc3\xa1stago\
+SF:x20&amp;\x20Co\x20\|\x20Sistema\x20de")%r(FourOhFourRequest,495,"HTTP/1
+SF:\.0\x20200\x20OK\r\nServer:\x20gunicorn\r\nDate:\x20Tue,\x2006\x20Oct\x
+SF:202026\x2000:25:50\x20GMT\r\nConnection:\x20close\r\nContent-Dispositio
+SF:n:\x20inline;\x20filename=index\.html\r\nContent-Type:\x20text/html;\x2
+SF:0charset=utf-8\r\nContent-Length:\x20444\r\nLast-Modified:\x20Tue,\x200
+SF:6\x20Oct\x202026\x2000:24:37\x20GMT\r\nCache-Control:\x20no-cache\r\nET
+SF:ag:\x20\"1791246277\.5069332-444-811734165\"\r\nAccept-Ranges:\x20bytes
+SF:\r\nX-Content-Type-Options:\x20nosniff\r\nX-Frame-Options:\x20DENY\r\nR
+SF:eferrer-Policy:\x20no-referrer\r\nPermissions-Policy:\x20geolocation=\(
+SF:\),\x20microphone=\(\),\x20camera=\(\)\r\nCross-Origin-Opener-Policy:\x
+SF:20same-origin\r\nContent-Security-Policy:\x20default-src\x20'self';\x20
+SF:script-src\x20'self';\x20style-src\x20'self'\x20'unsafe-inline';\x20img
+SF:-src\x20'self'\x20data:;\x20connect-src\x20'self';\x20frame-ancestors\x
+SF:20'none';\x20base-uri\x20'self';\x20form-action\x20'self'\r\n\r\n<!DOCT
+SF:YPE\x20html>\n<html\x20lang=\"es\">\n<head>\n<meta\x20charset=\"UTF-8\"
+SF:>\n<meta\x20name=\"viewport\"\x20content=\"width=device-width,\x20initi
+SF:al-scale=1\.0\">\n<title>V\xc3\xa1stago\x20&amp;\x20Co\x20\|\x20Sistema
+SF:\x20de");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Oct  6 00:27:36 2026 -- 1 IP address (1 host up) scanned in 117.57 seconds

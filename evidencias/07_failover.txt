@@ -1,0 +1,59 @@
+### Prueba de conmutación (failover) por promoción de la réplica — 06-oct-2026
+### Réplica descartable creada con pg_basebackup -R desde el primario (5433); corre en el puerto 5435 y se elimina al final. Los datos del primario no se modifican.
+
+### 1. Primario: la réplica de prueba está conectada por streaming
+-[ RECORD 1 ]----+------------
+application_name | walreceiver
+state            | streaming
+sync_state       | async
+sent_lsn         | 0/6000060
+replay_lsn       | 0/6000060
+
+### 2. Antes de promover: la réplica está en recuperación (solo lectura) y tiene los mismos datos
+ es_replica | movimientos | auditoria 
+------------+-------------+-----------
+ t          |           5 |        86
+(1 row)
+
+ es_replica | movimientos | auditoria 
+------------+-------------+-----------
+ f          |           5 |        86
+(1 row)
+
+### 3. Escritura en la réplica antes de promover (debe fallar)
+ERROR:  cannot execute UPDATE in a read-only transaction
+### 4. Promoción: pg_ctl promote (se asume caída del primario)
+waiting for server to promote.... done
+server promoted
+Tiempo de promoción: 0.11 s
+### 5. Después de promover: ya no está en recuperación y acepta escrituras
+ es_replica 
+------------
+ f
+(1 row)
+
+BEGIN
+      nombre      | stock_actual 
+------------------+--------------
+ Lecitina de soya |       41.000
+(1 row)
+
+UPDATE 1
+ROLLBACK
+ id |     titulo      
+----+-----------------
+  5 | prueba failover
+(1 row)
+
+INSERT 0 1
+### 6. El primario original no recibió esa escritura (clústeres ya independientes)
+ alertas_en_primario 
+---------------------
+                   0
+(1 row)
+
+ alertas_en_promovida 
+----------------------
+                    1
+(1 row)
+

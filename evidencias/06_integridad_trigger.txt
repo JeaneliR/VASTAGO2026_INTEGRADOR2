@@ -1,0 +1,41 @@
+### Prueba de integridad (trigger + CHECK + auditoria inmutable) en una transaccion con ROLLBACK, 06-oct-2026, rol vastago_app, PostgreSQL primario 5433.
+### El stock real de 'Lecitina de soya' queda en 40.000 y movimientos_inventario en 5 filas tras el ROLLBACK.
+
+BEGIN
+ id |      nombre      | stock_actual 
+----+------------------+--------------
+  5 | Lecitina de soya |       40.000
+(1 row)
+
+INSERT 0 1
+ id |      nombre      | stock_actual 
+----+------------------+--------------
+  5 | Lecitina de soya |       50.000
+(1 row)
+
+SAVEPOINT
+psql:trg.sql:7: ERROR:  new row for relation "insumos" violates check constraint "insumos_stock_actual_check"
+DETAIL:  Failing row contains (5, Lecitina de soya, kg, -99949.000, 25.000, 14.00, 2026-10-06 00:47:28.137796+00).
+CONTEXT:  SQL statement "UPDATE insumos SET stock_actual = stock_actual - NEW.cantidad, actualizado_en = now()
+         WHERE id = NEW.insumo_id"
+PL/pgSQL function fn_aplicar_movimiento() line 7 at SQL statement
+ROLLBACK
+psql:trg.sql:9: ERROR:  new row for relation "movimientos_inventario" violates check constraint "movimientos_inventario_tipo_check"
+DETAIL:  Failing row contains (8, 5, XX, 1.000, prueba CHECK tipo, null, 1, 2026-10-06 00:47:28.137796+00).
+ROLLBACK
+psql:trg.sql:11: ERROR:  La tabla auditoria es de solo lectura/anexado
+CONTEXT:  PL/pgSQL function fn_bloquear_auditoria() line 3 at RAISE
+ROLLBACK
+psql:trg.sql:13: ERROR:  La tabla auditoria es de solo lectura/anexado
+CONTEXT:  PL/pgSQL function fn_bloquear_auditoria() line 3 at RAISE
+ROLLBACK
+ id |      nombre      | stock_actual 
+----+------------------+--------------
+  5 | Lecitina de soya |       40.000
+(1 row)
+
+ movimientos 
+-------------
+           5
+(1 row)
+

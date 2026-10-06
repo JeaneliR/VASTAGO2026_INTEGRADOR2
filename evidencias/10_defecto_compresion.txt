@@ -1,0 +1,6 @@
+# Defecto DEF-05: los archivos estáticos no se comprimían (direct_passthrough) — experimento aislado, 06-oct-2026
+# Flask-Compress no comprime respuestas en modo direct_passthrough (las de send_from_directory). _plano() en app/__init__.py lo desactiva.
+# Script: send_from_directory(bundle.js) con y sin 'r.direct_passthrough = False; r.make_sequence()'; Accept-Encoding: gzip
+
+sin _plano() -> Content-Encoding: (ninguna) | bytes: 243725
+con _plano()   -> Content-Encoding: gzip | bytes: 74627

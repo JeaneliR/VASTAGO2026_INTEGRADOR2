@@ -1,0 +1,15 @@
+- Nikto v2.1.5/2.1.5
++ Target Host: localhost
++ Target Port: 8000
++ GET /: Server leaks inodes via ETags, header found with file /, inode: 0x1791246277.5069332, size: 0x444, mtime: 0x811734165
++ GET /: Uncommon header 'cross-origin-opener-policy' found, with contents: same-origin
++ GET /: Uncommon header 'x-content-type-options' found, with contents: nosniff
++ GET /: Uncommon header 'permissions-policy' found, with contents: geolocation=(), microphone=(), camera=()
++ GET /: Uncommon header 'x-frame-options' found, with contents: DENY
++ GET /: Uncommon header 'content-security-policy' found, with contents: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
++ GET /: Uncommon header 'referrer-policy' found, with contents: no-referrer
++ GET /: Uncommon header 'content-disposition' found, with contents: inline; filename=index.html
++ GET /robots.txt: "robots.txt" retrieved but it does not contain any 'disallow' entries (which is odd).
++ GET /clientaccesspolicy.xml: lines
++ GET /crossdomain.xml: /crossdomain.xml contains 0 line which should be manually viewed for improper domains or wildcards.
++ OPTIONS /: Allowed HTTP Methods: HEAD, GET, OPTIONS 

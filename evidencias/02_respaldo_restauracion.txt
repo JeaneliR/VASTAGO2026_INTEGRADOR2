@@ -1,0 +1,8 @@
+### Respaldo y restauración (db/admin/backup_restore.sh)
+Respaldo creado: /tmp/backups/vastago_20261006_002317.dump (44K)
+NOTICE:  database "vastago_restore_test" does not exist, skipping
+usuarios                   original=5 restaurada=5 OK
+insumos                    original=7 restaurada=7 OK
+ordenes_produccion         original=6 restaurada=6 OK
+movimientos_inventario     original=5 restaurada=5 OK
+auditoria                  original=85 restaurada=85 OK

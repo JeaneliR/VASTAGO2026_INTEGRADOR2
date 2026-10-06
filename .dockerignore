@@ -1,0 +1,8 @@
+**/node_modules
+**/__pycache__
+backend/static
+.git
+evidencias
+docs
+*.dump
+.env

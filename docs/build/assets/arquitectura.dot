@@ -1,0 +1,20 @@
+digraph G { rankdir=TB; nodesep=0.35; ranksep=0.5; bgcolor="white"; node [shape=box style="rounded,filled" fillcolor="#FFFDF9" color="#4A2C1F" fontname="Inter" fontsize=11 margin="0.14,0.08"]; edge [color="#4A2C1F" fontname="Inter" fontsize=11 fontsize=9 arrowsize=0.8];
+user [label="Usuario\n(navegador)" shape=ellipse fillcolor="#FAF3E7"];
+subgraph cluster_r { label="Plataforma cloud: Render (HTTPS / TLS 1.2-1.3)"; style="rounded,filled"; fillcolor="#F6EFE3"; color="#4A2C1F"; fontname="Inter" fontsize=11
+  subgraph cluster_w { label="Servicio web (contenedor Docker, gunicorn)"; style="rounded,filled"; fillcolor="white"; color="#C89B3C";
+    react [label="Frontend React\n(archivos estáticos)"];
+    rutas [label="Capa de rutas (Flask)\nRBAC · validación · límites de tasa"];
+    serv [label="Capa de servicios\n(auth_service) · transacciones\nde negocio en las rutas"];
+    repo [label="Capa de acceso a datos\nPatrón Repository"];
+    sec [label="Seguridad transversal\nbcrypt · JWT · AES-256-GCM\ncabeceras · auditoría" fillcolor="#FFF4CC"];
+  }
+  pg [label="PostgreSQL 16\n(primario)" shape=cylinder fillcolor="#E4EEF9"];
+}
+rep [label="PostgreSQL 16 (réplica, demostración local\npuerto 5434; en Render la HA la define el plan)" shape=cylinder fillcolor="#E4EEF9" style="dashed,filled"];
+ml [label="ml-service/forecast.py (scikit-learn)\nentrenamiento por lote → JSON → seed" fillcolor="#E4F3E9"];
+gh [label="GitHub\n(repositorio + CI)" shape=component fillcolor="#FAF3E7"];
+user -> react [label="HTTPS"]; react -> rutas [label="REST /api (JWT)"]; rutas -> serv -> repo; repo -> pg [label="SQL parametrizado\n(pool de conexiones)"];
+pg -> rep [label="streaming asíncrono\n(WAL), probado en local" style=bold]; ml -> pg [label="carga pronósticos" style=dashed];
+sec -> rutas [style=dotted arrowhead=none]; sec -> serv [style=dotted arrowhead=none];
+gh -> rutas [label="deploy automático\n(render.yaml)" style=dashed constraint=false];
+}

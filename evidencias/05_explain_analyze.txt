@@ -1,0 +1,264 @@
+### EXPLAIN ANALYZE sobre PostgreSQL 16.15 primario (127.0.0.1:5433, BD vastago), 06-oct-2026, rol vastago_app.
+### Parte 1: consultas reales del sistema sobre los datos de demostracion (tablas de pocas filas). Solo lectura (BEGIN/ROLLBACK para FOR UPDATE).
+
+### Q1 historial de movimientos (MovimientoRepository.ultimos)
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.14..9.28 rows=1 width=339) (actual time=0.034..0.035 rows=1 loops=1)
+   Buffers: shared hit=3
+   ->  Nested Loop  (cost=0.14..9.28 rows=1 width=339) (actual time=0.033..0.034 rows=1 loops=1)
+         Join Filter: (u.id = m.usuario_id)
+         Buffers: shared hit=3
+         ->  Index Scan using ix_mov_insumo_fecha on movimientos_inventario m  (cost=0.14..8.16 rows=1 width=332) (actual time=0.014..0.015 rows=1 loops=1)
+               Index Cond: (insumo_id = 1)
+               Buffers: shared hit=2
+         ->  Seq Scan on usuarios u  (cost=0.00..1.05 rows=5 width=23) (actual time=0.009..0.009 rows=1 loops=1)
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=272
+ Planning Time: 1.073 ms
+ Execution Time: 0.089 ms
+(14 rows)
+
+### Q2 listado de inventario con semaforo (v_inventario)
+                                                 QUERY PLAN                                                 
+------------------------------------------------------------------------------------------------------------
+ Sort  (cost=24.20..24.77 rows=230 width=308) (actual time=0.050..0.051 rows=7 loops=1)
+   Sort Key: insumos.nombre
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=4
+   ->  Seq Scan on insumos  (cost=0.00..15.18 rows=230 width=308) (actual time=0.019..0.026 rows=7 loops=1)
+         Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=61
+ Planning Time: 0.301 ms
+ Execution Time: 0.068 ms
+(10 rows)
+
+### Q3 bloqueo de fila (FOR UPDATE por PK)
+                                                          QUERY PLAN                                                          
+------------------------------------------------------------------------------------------------------------------------------
+ LockRows  (cost=0.14..8.17 rows=1 width=244) (actual time=0.022..0.023 rows=1 loops=1)
+   Buffers: shared hit=3
+   ->  Index Scan using insumos_pkey on insumos  (cost=0.14..8.16 rows=1 width=244) (actual time=0.006..0.007 rows=1 loops=1)
+         Index Cond: (id = 1)
+         Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=3
+ Planning Time: 0.048 ms
+ Execution Time: 0.036 ms
+(9 rows)
+
+### Q4 BOM de un producto
+                                                            QUERY PLAN                                                             
+-----------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=27.53..27.55 rows=8 width=268) (actual time=0.072..0.074 rows=4 loops=1)
+   Sort Key: i.nombre
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=3
+   ->  Hash Join  (cost=14.47..27.41 rows=8 width=268) (actual time=0.058..0.062 rows=4 loops=1)
+         Hash Cond: (i.id = b.insumo_id)
+         Buffers: shared hit=3
+         ->  Seq Scan on insumos i  (cost=0.00..12.30 rows=230 width=260) (actual time=0.003..0.003 rows=7 loops=1)
+               Buffers: shared hit=1
+         ->  Hash  (cost=14.37..14.37 rows=8 width=20) (actual time=0.029..0.029 rows=4 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=2
+               ->  Bitmap Heap Scan on bom b  (cost=4.21..14.37 rows=8 width=20) (actual time=0.012..0.013 rows=4 loops=1)
+                     Recheck Cond: (producto_id = 1)
+                     Heap Blocks: exact=1
+                     Buffers: shared hit=2
+                     ->  Bitmap Index Scan on bom_pkey  (cost=0.00..4.21 rows=8 width=0) (actual time=0.004..0.004 rows=4 loops=1)
+                           Index Cond: (producto_id = 1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=28
+ Planning Time: 0.204 ms
+ Execution Time: 0.099 ms
+(23 rows)
+
+### Q5 login: find_by_email (lower(email))
+                                                         QUERY PLAN                                                         
+----------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.14..9.35 rows=1 width=271) (actual time=0.019..0.021 rows=1 loops=1)
+   Buffers: shared hit=3
+   ->  Seq Scan on usuarios u  (cost=0.00..1.07 rows=1 width=173) (actual time=0.012..0.013 rows=1 loops=1)
+         Filter: (lower((email)::text) = 'admin@vastagoyco.pe'::text)
+         Rows Removed by Filter: 4
+         Buffers: shared hit=1
+   ->  Index Scan using roles_pkey on roles r  (cost=0.14..8.16 rows=1 width=100) (actual time=0.005..0.005 rows=1 loops=1)
+         Index Cond: (id = u.rol_id)
+         Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=132
+ Planning Time: 0.503 ms
+ Execution Time: 0.041 ms
+(13 rows)
+
+### Q6 refresh: buscar_valida(token_hash)
+                                                                       QUERY PLAN                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on sesiones  (cost=0.00..3.34 rows=1 width=118) (actual time=0.052..0.053 rows=0 loops=1)
+   Filter: ((NOT revocada) AND (expira_en > now()) AND ((token_hash)::text = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::text))
+   Rows Removed by Filter: 67
+   Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=102
+ Planning Time: 0.344 ms
+ Execution Time: 0.061 ms
+(8 rows)
+
+### Q7 ultimos 200 de auditoria
+                                                    QUERY PLAN                                                    
+------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=5.62..5.84 rows=86 width=84) (actual time=0.086..0.099 rows=86 loops=1)
+   Buffers: shared hit=5
+   ->  Sort  (cost=5.62..5.84 rows=86 width=84) (actual time=0.085..0.090 rows=86 loops=1)
+         Sort Key: id DESC
+         Sort Method: quicksort  Memory: 36kB
+         Buffers: shared hit=5
+         ->  Seq Scan on auditoria  (cost=0.00..2.86 rows=86 width=84) (actual time=0.009..0.030 rows=86 loops=1)
+               Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=68
+ Planning Time: 0.224 ms
+ Execution Time: 0.114 ms
+(12 rows)
+
+### Q8 kpis: ordenes activas
+                                                      QUERY PLAN                                                      
+----------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=20.40..20.41 rows=1 width=16) (actual time=0.013..0.013 rows=1 loops=1)
+   Buffers: shared hit=1
+   ->  Seq Scan on ordenes_produccion  (cost=0.00..15.20 rows=520 width=42) (actual time=0.005..0.006 rows=6 loops=1)
+         Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=59
+ Planning Time: 0.170 ms
+ Execution Time: 0.088 ms
+(8 rows)
+
+
+### Parte 2: carga SINTETICA en tablas TEMPORALES (CREATE TEMP TABLE; no tocan datos reales ni generan WAL) para justificar indices a escala.
+### Script: ver bloques SQL al inicio de cada caso (generate_series 300 000 / 500 000 / 200 000 filas).
+
+ filas_mov_t 
+-------------
+      300000
+(1 row)
+### A1 SIN indice (300 000 filas)
+                                                       QUERY PLAN                                                       
+------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=7987.21..7987.26 rows=20 width=44) (actual time=34.911..34.916 rows=20 loops=1)
+   Buffers: local read=3093
+   ->  Sort  (cost=7987.21..8094.71 rows=43000 width=44) (actual time=34.909..34.912 rows=20 loops=1)
+         Sort Key: fecha DESC
+         Sort Method: top-N heapsort  Memory: 26kB
+         Buffers: local read=3093
+         ->  Seq Scan on mov_t  (cost=0.00..6843.00 rows=43000 width=44) (actual time=0.009..26.587 rows=42857 loops=1)
+               Filter: (insumo_id = 3)
+               Rows Removed by Filter: 257143
+               Buffers: local read=3093
+ Planning:
+   Buffers: shared hit=34
+ Planning Time: 0.158 ms
+ Execution Time: 34.934 ms
+(14 rows)
+### A2 CON indice compuesto (insumo_id, fecha DESC)
+                                                           QUERY PLAN                                                           
+--------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.42..6.70 rows=20 width=44) (actual time=0.023..0.031 rows=20 loops=1)
+   Buffers: local read=5
+   ->  Index Scan using ix_mov_t on mov_t  (cost=0.42..13667.97 rows=43540 width=44) (actual time=0.023..0.029 rows=20 loops=1)
+         Index Cond: (insumo_id = 3)
+         Buffers: local read=5
+ Planning:
+   Buffers: shared hit=26, local read=1
+ Planning Time: 0.250 ms
+ Execution Time: 0.045 ms
+(9 rows)
+### B1 auditoria: rango de fechas (ultimas 2 horas) SIN indice por fecha
+                                                   QUERY PLAN                                                    
+-----------------------------------------------------------------------------------------------------------------
+ Sort  (cost=14897.15..14915.28 rows=7254 width=25) (actual time=53.161..53.485 rows=7199 loops=1)
+   Sort Key: fecha DESC
+   Sort Method: quicksort  Memory: 586kB
+   Buffers: local read=5682
+   ->  Seq Scan on aud_t  (cost=0.00..14432.00 rows=7254 width=25) (actual time=0.012..52.258 rows=7199 loops=1)
+         Filter: (fecha >= (now() - '02:00:00'::interval))
+         Rows Removed by Filter: 492801
+         Buffers: local read=5682
+ Planning:
+   Buffers: shared hit=20, local read=1
+ Planning Time: 0.229 ms
+ Execution Time: 53.727 ms
+(12 rows)
+### B2 auditoria: mismo rango CON indice por fecha
+                                                          QUERY PLAN                                                           
+-------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using ix_aud_t_fecha on aud_t  (cost=0.43..292.73 rows=7217 width=25) (actual time=0.009..1.186 rows=7199 loops=1)
+   Index Cond: (fecha >= (now() - '02:00:00'::interval))
+   Buffers: local hit=4 read=100
+ Planning:
+   Buffers: shared hit=11, local read=5
+ Planning Time: 0.147 ms
+ Execution Time: 1.441 ms
+(7 rows)
+### B3 auditoria: ultimos 200 por PK (consulta real del sistema)
+                                                                 QUERY PLAN                                                                  
+---------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.42..7.89 rows=200 width=32) (actual time=0.014..0.056 rows=200 loops=1)
+   Buffers: local hit=3 read=4
+   ->  Index Scan Backward using aud_t_pkey on aud_t  (cost=0.42..18681.42 rows=500000 width=32) (actual time=0.013..0.044 rows=200 loops=1)
+         Buffers: local hit=3 read=4
+ Planning:
+   Buffers: shared hit=7
+ Planning Time: 0.051 ms
+ Execution Time: 0.069 ms
+(8 rows)
+### C1 sesiones: buscar_valida SIN indice unico (200 000 filas)
+                                                                       QUERY PLAN                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on ses_t  (cost=0.00..7449.00 rows=98 width=106) (actual time=26.514..26.514 rows=0 loops=1)
+   Filter: ((NOT revocada) AND (expira_en > now()) AND ((token_hash)::text = 'f1c1592588411002af340cbaedd6fc33e07413354875be01a996dc560274708e'::text))
+   Rows Removed by Filter: 200000
+   Buffers: local read=3449 written=1024
+ Planning:
+   Buffers: shared hit=36
+ Planning Time: 0.168 ms
+ Execution Time: 26.527 ms
+(8 rows)
+### C2 sesiones: CON indice unico (equivalente a sesiones_token_hash_key)
+                                                                       QUERY PLAN                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on ses_t  (cost=0.00..7449.00 rows=101 width=106) (actual time=22.294..22.295 rows=0 loops=1)
+   Filter: ((NOT revocada) AND (expira_en > now()) AND ((token_hash)::text = 'f1c1592588411002af340cbaedd6fc33e07413354875be01a996dc560274708e'::text))
+   Rows Removed by Filter: 200000
+   Buffers: local read=3449
+ Planning:
+   Buffers: shared hit=38, local read=1
+ Planning Time: 0.172 ms
+ Execution Time: 22.308 ms
+(8 rows)
+
+### Parte 2b: correccion del caso C (literal sin tipo, como lo envia psycopg2; en C2 del bloque anterior la comparacion text vs char(64) impedia usar el indice)
+### C1 SIN indice (200 000 filas)
+                                                                    QUERY PLAN                                                                    
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on ses_t  (cost=0.00..6949.00 rows=1 width=106) (actual time=0.128..24.396 rows=1 loops=1)
+   Filter: ((NOT revocada) AND (token_hash = 'f1c1592588411002af340cbaedd6fc33e07413354875be01a996dc560274708e'::bpchar) AND (expira_en > now()))
+   Rows Removed by Filter: 199999
+ Planning Time: 0.140 ms
+ Execution Time: 24.406 ms
+(5 rows)
+
+### C2 CON indice unico (literal sin tipo, como lo envia psycopg2)
+                                                    QUERY PLAN                                                     
+-------------------------------------------------------------------------------------------------------------------
+ Index Scan using ses_t_tok on ses_t  (cost=0.42..8.44 rows=1 width=106) (actual time=0.020..0.021 rows=1 loops=1)
+   Index Cond: (token_hash = 'f1c1592588411002af340cbaedd6fc33e07413354875be01a996dc560274708e'::bpchar)
+   Filter: ((NOT revocada) AND (expira_en > now()))
+ Planning Time: 0.137 ms
+ Execution Time: 0.032 ms
+(5 rows)
+

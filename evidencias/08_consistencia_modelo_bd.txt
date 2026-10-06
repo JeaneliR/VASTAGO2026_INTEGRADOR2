@@ -1,0 +1,39 @@
+### Verificación modelo ER <-> BD 'vastago' (PostgreSQL 127.0.0.1:5433)
+tabla                     c.ER  c.BD  tipos       PK FK(ER/BD)
+alertas                      5     5     OK       OK      0/0
+auditoria                    9     9     OK       OK      1/1
+bom                          3     3     OK       OK      0/2
+demanda_historica            3     3     OK       OK      0/1
+insumos                      7     7     OK       OK      0/0
+movimientos_inventario       8     8     OK       OK      3/3
+ordenes_produccion           8     8     OK       OK      2/2
+productos                    3     3     OK       OK      0/0
+pronosticos                  5     5     OK       OK      0/1
+roles                        3     3     OK       OK      0/0
+sesiones                     8     8     OK       OK      1/1
+usuarios                    11    11     OK       OK      1/1
+TOTAL columnas ER=73 BD=73; tipos iguales=70; enumeraciones=3; tablas ER=12 BD=12
+FK reales=12 (clave foránea total en pg_constraint); relaciones dibujadas=12
+
+### Verificación BD real <-> script db/schema.sql (BD temporal 'vastago_chk')
+columnas             real= 73 script= 73  IDENTICO
+restricciones        real= 41 script= 41  IDENTICO
+índices              real= 24 script= 24  IDENTICO
+vista (líneas de DDL) real= 11 script= 11  IDENTICO
+triggers             real=  2 script=  2  IDENTICO
+
+### Pruebas adicionales sobre el rol de la aplicación (vastago_app), 06-oct-2026; cada bloque termina en ROLLBACK y no altera datos
+-- a) Borrar un usuario que tiene filas en auditoria (ON DELETE SET NULL intenta un UPDATE bloqueado por el trigger)
+BEGIN;
+DELETE FROM usuarios WHERE id = (SELECT usuario_id FROM auditoria WHERE usuario_id IS NOT NULL LIMIT 1);
+ERROR:  La tabla auditoria es de solo lectura/anexado
+CONTEXT:  PL/pgSQL function fn_bloquear_auditoria() line 3 at RAISE
+SQL statement "UPDATE ONLY "public"."auditoria" SET "usuario_id" = NULL WHERE $1 OPERATOR(pg_catalog.=) "usuario_id""
+ROLLBACK;
+-- b) TRUNCATE sobre auditoria con el rol de la aplicación (el trigger de fila no intercepta TRUNCATE)
+BEGIN;
+TRUNCATE auditoria;            -- TRUNCATE TABLE (permitido: vastago_app es propietario de la tabla)
+SELECT count(*) FROM auditoria;   -- 0
+ROLLBACK;
+SELECT count(*) FROM auditoria;   -- 87 (restaurado por el ROLLBACK)
+-- c) Propietario de las tablas y privilegios: has_table_privilege('vastago_app','auditoria','TRUNCATE') = t; propietario = vastago_app

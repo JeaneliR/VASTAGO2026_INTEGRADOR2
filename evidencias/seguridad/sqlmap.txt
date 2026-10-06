@@ -1,0 +1,51 @@
+### sqlmap 1: POST /api/auth/login (JSON) — parámetros email y password, level 3 / risk 2
+[*] starting @ 00:28:00 /2026-10-06/
+[00:28:01] [WARNING] heuristic (basic) test shows that (custom) POST parameter 'JSON email' might not be SQL injectable
+[00:28:01] [INFO] testing 'Boolean-based blind - Parameter replace (original value)'
+[00:28:02] [INFO] testing 'Boolean-based blind - Parameter replace (DUAL)'
+[00:28:02] [INFO] testing 'Boolean-based blind - Parameter replace (DUAL - original value)'
+[00:28:02] [INFO] testing 'Boolean-based blind - Parameter replace (CASE)'
+[00:28:02] [INFO] testing 'Boolean-based blind - Parameter replace (CASE - original value)'
+[00:28:02] [INFO] testing 'PostgreSQL boolean-based blind - Parameter replace'
+[00:28:02] [INFO] testing 'PostgreSQL error-based - Parameter replace'
+[00:28:02] [INFO] testing 'PostgreSQL > 8.1 time-based blind - Parameter replace'
+[00:28:02] [WARNING] (custom) POST parameter 'JSON email' does not seem to be injectable
+[00:28:02] [WARNING] heuristic (basic) test shows that (custom) POST parameter 'JSON password' might not be SQL injectable
+[00:28:11] [INFO] testing 'Boolean-based blind - Parameter replace (original value)'
+[00:28:11] [INFO] testing 'Boolean-based blind - Parameter replace (DUAL)'
+[00:28:11] [INFO] testing 'Boolean-based blind - Parameter replace (DUAL - original value)'
+[00:28:11] [INFO] testing 'Boolean-based blind - Parameter replace (CASE)'
+[00:28:12] [INFO] testing 'Boolean-based blind - Parameter replace (CASE - original value)'
+[00:28:18] [INFO] testing 'PostgreSQL boolean-based blind - Parameter replace'
+[00:28:22] [INFO] testing 'PostgreSQL error-based - Parameter replace'
+[00:28:37] [INFO] testing 'PostgreSQL > 8.1 time-based blind - Parameter replace'
+[00:29:02] [WARNING] (custom) POST parameter 'JSON password' does not seem to be injectable
+[00:29:02] [CRITICAL] all tested parameters do not appear to be injectable. Try to increase values for '--level'/'--risk' options if you wish to perform more tests. If yo
+[00:29:02] [WARNING] HTTP error codes detected during run:
+401 (Unauthorized) - 593 times
+[*] ending @ 00:29:02 /2026-10-06/
+
+### sqlmap 2: GET /api/inventario/1*/movimientos (parámetro de ruta, autenticado)
+[*] starting @ 00:29:02 /2026-10-06/
+[00:29:03] [WARNING] URI parameter '#1*' does not appear to be dynamic
+[00:29:03] [WARNING] heuristic (basic) test shows that URI parameter '#1*' might not be SQL injectable
+[00:29:04] [WARNING] URI parameter '#1*' does not seem to be injectable
+[00:29:04] [CRITICAL] all tested parameters do not appear to be injectable. Try to increase values for '--level'/'--risk' options if you wish to perform more tests. If yo
+[00:29:04] [WARNING] HTTP error codes detected during run:
+[*] ending @ 00:29:04 /2026-10-06/
+
+### sqlmap 3: POST /api/inventario/1/movimientos (JSON: tipo, cantidad, motivo; autenticado)
+[*] starting @ 00:29:04 /2026-10-06/
+[00:29:04] [WARNING] target URL content is not stable (i.e. content differs). sqlmap will base the page comparison on a sequence matcher. If no dynamic nor injectable par
+[00:29:05] [WARNING] heuristic (basic) test shows that (custom) POST parameter 'JSON tipo' might not be SQL injectable
+[00:29:06] [WARNING] (custom) POST parameter 'JSON tipo' does not seem to be injectable
+[00:29:06] [WARNING] heuristic (basic) test shows that (custom) POST parameter 'JSON cantidad' might not be SQL injectable
+[00:29:07] [WARNING] (custom) POST parameter 'JSON cantidad' does not seem to be injectable
+[00:29:07] [WARNING] heuristic (basic) test shows that (custom) POST parameter 'JSON motivo' might not be SQL injectable
+[00:29:07] [INFO] (custom) POST parameter 'JSON motivo' appears to be 'AND boolean-based blind - WHERE or HAVING clause' injectable 
+[00:29:07] [INFO] automatically extending ranges for UNION query injection technique tests as there is at least one other (potential) technique found
+[00:29:07] [WARNING] false positive or unexploitable injection point detected
+[00:29:07] [WARNING] (custom) POST parameter 'JSON motivo' does not seem to be injectable
+[00:29:07] [CRITICAL] all tested parameters do not appear to be injectable. Try to increase values for '--level'/'--risk' options if you wish to perform more tests. If yo
+[00:29:07] [WARNING] HTTP error codes detected during run:
+[*] ending @ 00:29:07 /2026-10-06/

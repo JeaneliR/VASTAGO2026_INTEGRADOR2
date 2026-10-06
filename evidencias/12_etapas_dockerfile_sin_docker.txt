@@ -1,0 +1,21 @@
+# Emulación de las etapas del Dockerfile SIN Docker — 06-oct-2026 (la imagen no pudo construirse: ver 11_docker_build_intento.txt)
+
+## Etapa 1 (node:22-alpine): 'npm run build' en una copia aislada de frontend/ con node_modules existentes (el 'npm ci' previo no se repitió); node v22.22.0
+Frontend compilado en backend/static/ — tiempo 0.32 s
+bundle.js  243725 B   bundle.css  4065 B   index.html  444 B
+bundle.js idéntico (cmp) al que sirven las pruebas de humo en backend/static
+
+## Etapa 2 (python:3.13-slim): versiones fijadas en backend/requirements.txt frente a las instaladas (Python 3.13.16)
+Flask            requerido=3.1.3    instalado=3.1.3    OK
+Flask-Limiter    requerido=4.1.1    instalado=4.1.1    OK
+psycopg2-binary  requerido=2.9.13   instalado=2.9.13   OK
+bcrypt           requerido=5.0.0    instalado=5.0.0    OK
+PyJWT            requerido=2.15.1   instalado=2.15.1   OK
+cryptography     requerido=50.0.1   instalado=50.0.1   OK
+gunicorn         requerido=26.2.0   instalado=26.2.0   OK
+Flask-Compress   requerido=1.25     instalado=1.25     OK
+Brotli           requerido=1.2.0    instalado=1.2.0    OK
+Resultado: todas las versiones fijadas coinciden
+
+## Arranque (CMD): python -m app.seed --if-empty && gunicorn -c gunicorn.conf.py wsgi:app → ejecutado en 08_smoke_produccion_local.txt
+## No cubierto sin Docker: resolución de imágenes base, usuario no root (UID 10001), capas e imagen final.

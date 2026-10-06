@@ -1,0 +1,27 @@
+# Cobertura de pruebas — 2026-10-06 — comando: cd backend && python3 -m pytest tests -q --cov=app --cov-report=term-missing
+........................                                                 [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                             Stmts   Miss  Cover   Missing
+--------------------------------------------------------------
+app/__init__.py                     56     18    68%   31, 35, 39-43, 48-50, 57-64
+app/config.py                       27      5    81%   8, 31-34
+app/db.py                           19      0   100%
+app/extensions.py                    3      0   100%
+app/repositories/__init__.py         0      0   100%
+app/repositories/analitica.py       30      0   100%
+app/repositories/base.py            25      3    88%   32-34
+app/repositories/inventario.py      17      0   100%
+app/repositories/produccion.py      20      1    95%   20
+app/repositories/usuarios.py        27      2    93%   40, 58
+app/routes/__init__.py               0      0   100%
+app/routes/auth.py                  90     14    84%   51-54, 86, 92, 102-110
+app/routes/negocio.py              103      5    95%   43, 74, 90, 104, 108
+app/security.py                     79      4    95%   19-20, 62, 124
+app/seed.py                         43      6    86%   20-24, 59
+app/services/__init__.py             0      0   100%
+app/services/auth_service.py        57      2    96%   57, 60
+--------------------------------------------------------------
+TOTAL                              596     60    90%
+24 passed in 2.26s

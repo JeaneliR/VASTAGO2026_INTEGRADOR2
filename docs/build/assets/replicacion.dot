@@ -1,0 +1,11 @@
+digraph G { rankdir=LR; nodesep=0.4; ranksep=0.9; bgcolor="white"; node [shape=box style="rounded,filled" fillcolor="#FFFDF9" color="#4A2C1F" fontname="Inter" fontsize=11 margin="0.14,0.08"]; edge [color="#4A2C1F" fontname="Inter" fontsize=11 fontsize=9 arrowsize=0.8];
+app [label="Aplicación Flask\n(escrituras y lecturas críticas)" shape=box];
+rd [label="Consultas de solo lectura\n(psql / reportes; la app v1 no las usa aún)" shape=box];
+subgraph cluster_p { label="Servidor primario (puerto 5433)"; style="rounded,filled"; fillcolor="#E4EEF9"; color="#4A2C1F"; fontname="Inter" fontsize=11
+  pg [label="PostgreSQL 16\nPRIMARIO" shape=cylinder fillcolor="white"];
+  wal [label="WAL\n(registro de cambios)" shape=note fillcolor="#FFF4CC"]; }
+subgraph cluster_r { label="Servidor réplica (puerto 5434)"; style="rounded,filled"; fillcolor="#E4F3E9"; color="#4A2C1F"; fontname="Inter" fontsize=11
+  rp [label="PostgreSQL 16\nRÉPLICA (hot standby)" shape=cylinder fillcolor="white"]; }
+bk [label="pg_dump diario\n(formato custom, 7 días)" shape=folder fillcolor="#FAF3E7"];
+app -> pg [label="INSERT / UPDATE"]; pg -> wal [label="escribe"]; wal -> rp [label="streaming asíncrono\nslot replica1_slot\nrole replicator (SCRAM)" style=bold]; rd -> rp [label="SELECT"]; pg -> bk [style=dashed label="respaldo"]; rp -> pg [label="promoción manual\n(pg_promote / pg_ctl promote)" style=dotted constraint=false];
+}

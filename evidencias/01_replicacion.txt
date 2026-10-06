@@ -1,0 +1,36 @@
+### 1. Estado de replicación en el PRIMARIO (puerto 5433)
+-[ RECORD 1 ]--------------
+client_addr | 127.0.0.1
+state       | streaming
+sync_state  | async
+sent_lsn    | 0/3000060
+replay_lsn  | 0/3000060
+slot_name   | replica1_slot
+
+### 2. La réplica está en recuperación (solo lectura): pg_is_in_recovery()
+ es_replica 
+------------
+ t
+(1 row)
+
+### 3. Escritura en el primario y lectura inmediata en la réplica
+-- primario:
+ Lecitina de soya |       41.000
+
+-- réplica:
+ Lecitina de soya |       41.000
+
+### 4. Escritura directa en la réplica es rechazada
+ERROR:  cannot execute UPDATE in a read-only transaction
+### 5. Retraso de replicación (bytes pendientes) desde el primario
+ lag_bytes 
+-----------
+         0
+(1 row)
+
+### 6. Réplica: último WAL recibido/aplicado
+ recibido  | aplicado  |         ultimo_replay         
+-----------+-----------+-------------------------------
+ 0/3000518 | 0/3000518 | 2026-10-06 00:23:04.570913+00
+(1 row)
+

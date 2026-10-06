@@ -1,0 +1,10 @@
+# Intento de construcción de la imagen Docker (docker build) — 06-oct-2026 00:31 UTC
+# Resultado: NO se pudo construir. Docker Hub (registry-1.docker.io) respondió "Forbidden" al resolver python:3.13-slim; la resolución de node:22-alpine se canceló a continuación.
+# Extracto del registro del daemon (/tmp/dockerd.log), sin modificar:
+
+time="2026-10-06T00:31:06.250858089Z" level=info msg="fetch failed" error="failed to do request: Head \"https://registry-1.docker.io/v2/library/python/manifests/3.13-slim\": Forbidden" span="resolving docker.io/library/python:3.13-slim"
+time="2026-10-06T00:31:06.251233324Z" level=info msg="fetch failed" error="failed to do request: Head \"https://registry-1.docker.io/v2/library/node/manifests/22-alpine\": context canceled" host=registry-1.docker.io method=HEAD span="resolving docker.io/library/node:22-alpine" url="https://registry-1.docker.io/v2/library/node/manifests/22-alpine"
+time="2026-10-06T00:31:06.256277661Z" level=error msg=/moby.buildkit.v1.frontend.LLBBridge/Solve error="rpc error: code = Unknown desc = python:3.13-slim: failed to resolve source metadata for docker.io/library/python:3.13-slim: failed to do request: Head \"https://registry-1.docker.io/v2/library/python/manifests/3.13-slim\": Forbidden"
+time="2026-10-06T00:31:06.287547401Z" level=error msg=/moby.buildkit.v1.Control/Solve error="rpc error: code = Unknown desc = python:3.13-slim: failed to resolve source metadata for docker.io/library/python:3.13-slim: failed to do request: Head \"https://registry-1.docker.io/v2/library/python/manifests/3.13-slim\": Forbidden"
+
+# Cliente: Docker version 29.8.2, build 7fc2dff
