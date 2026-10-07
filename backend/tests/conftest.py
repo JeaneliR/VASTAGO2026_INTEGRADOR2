@@ -30,6 +30,7 @@ def login(client, email, password=PWD):
 def tokens(client):
     out = {}
     for rol, email in {"admin": "admin@vastagoyco.pe", "jefe": "jefe.produccion@vastagoyco.pe",
-                       "almacen": "almacen@vastagoyco.pe", "gerente": "gerente@vastagoyco.pe"}.items():
+                       "almacen": "almacen@vastagoyco.pe", "gerente": "gerente@vastagoyco.pe",
+                       "op1": "operario1@vastagoyco.pe", "op2": "operario2@vastagoyco.pe"}.items():
         out[rol] = {"Authorization": "Bearer " + login(client, email).get_json()["access_token"]}
     return out

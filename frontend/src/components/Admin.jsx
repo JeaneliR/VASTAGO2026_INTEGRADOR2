@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api.js";
 
-const ROLES = ["Administrador", "Jefe de Producción", "Almacenero", "Gerente"];
+const ROLES = ["Administrador", "Jefe de Producción", "Almacenero", "Gerente", "Operario"];
 
 export function Usuarios() {
   const [us, setUs] = useState([]), [open, setOpen] = useState(false), [err, setErr] = useState("");

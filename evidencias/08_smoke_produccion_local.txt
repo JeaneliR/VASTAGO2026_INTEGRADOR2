@@ -1,17 +1,17 @@
-# Pruebas de humo en modo producción local — 2026-10-06 01:12:23 UTC
-# gunicorn (APP_ENV=production, 2 workers) en :8100 contra PostgreSQL 16 :5433 (BD vastago_smoke, creada con 'python -m app.seed --if-empty')
+# Pruebas de humo en modo producción local — 2026-10-07 07:27:33 UTC
+# gunicorn (APP_ENV=production, 1 worker) en :8100 contra PostgreSQL 16 (BD vastago, creada con 'python -m app.seed')
 # Comando: python evidencias/smoke_test.py http://127.0.0.1:8100 <DEMO_PASSWORD> --escritura
 
 [PASA ] SM01  GET /api/health responde 200 {status: ok}
-           HTTP 200, 6 ms (primera petición)
+           HTTP 200, 7 ms (primera petición)
 [PASA ] SM02  GET / sirve la SPA (HTML con id root)
            HTTP 200, text/html; charset=utf-8, 444 B
 [PASA ] SM03  El bundle JS se sirve (200, JavaScript)
-           HTTP 200, 243725 B sin comprimir
+           HTTP 200, 270934 B sin comprimir
 [PASA ] SM04  Compresión activa (gzip) y reduce el tamaño
-           Content-Encoding: gzip; 243725 B → 74627 B (69.4 % menos)
+           Content-Encoding: gzip; 270934 B → 80540 B (70.3 % menos)
 [PASA ] SM05  Compresión Brotli disponible (br)
-           Content-Encoding: br; 75016 B
+           Content-Encoding: br; 81067 B
 [PASA ] SM06  Cabeceras de seguridad presentes
            todas presentes
 [PASA ] SM07  La cabecera Server no revela tecnología ni versión
@@ -32,31 +32,37 @@
            esperado 403
 [PASA ] SM15  Refresh sin cabecera anti-CSRF: 403
            POST /api/auth/refresh sin X-Requested-With
-[PASA ] SM16  Inventario leído desde PostgreSQL (7 insumos sembrados)
-           7 insumos; estados: crit, ok
+[PASA ] SM16  Inventario leído desde PostgreSQL (12 insumos sembrados)
+           12 insumos; estados: crit, ok
 [PASA ] SM17  KPIs del dashboard (200, 4 indicadores)
            HTTP 200; claves: mermaMes, ordenesActivas, precisionModelo, quiebresStock
 [PASA ] SM18  Pronóstico: 3 productos × 3 meses con MAPE
            3 series; MAPE: 4.5, 2.1, 7.0
-[PASA ] SM19  Usuarios demo creados por el seed (4)
-           Jefe de Producción, Administrador, Almacenero, Gerente
+[PASA ] SM19  Usuarios demo creados por el seed (6)
+           Jefe de Producción, Administrador, Almacenero, Gerente, Operario, Operario
 [PASA ] SM20  Archivo inexistente y ruta API inexistente devuelven 404 JSON
            404 / 404
 [PASA ] SM21  Error sin traza de pila
            HTTP 401: {"error":"Credenciales inv\u00e1lidas"}
 [PASA ] SM22  Latencia de /api/health: p95 < 500 ms (RNF02)
-           n=100, p50=1.8 ms, p95=2.3 ms, máx=2.4 ms
+           n=100, p50=1.9 ms, p95=2.6 ms, máx=5.0 ms
 [PASA ] SM23  Latencia de /api/kpis (consulta a BD): p95 < 500 ms
-           n=60, p50=4.0 ms, p95=4.9 ms
+           n=60, p50=3.7 ms, p95=5.0 ms
 [PASA ] SM24  Ingreso + salida de 10 kg actualizan el stock vía trigger y lo dejan igual
            40.0 → 50.0 → 40.0
 [PASA ] SM25  Salida mayor al stock rechazada (409)
            HTTP 409: Stock insuficiente
 [PASA ] SM26  Crear orden de producción (201, lote autogenerado)
-           HTTP 201, lote L-2026-017
+           HTTP 201, lote L-2026-020
 [PASA ] SM27  La bitácora registró los movimientos y la orden
-           acciones recientes: ACCESO_DENEGADO, LOGIN_FALLIDO, LOGIN_OK, MOVIMIENTO_INGRESO, MOVIMIENTO_SALIDA, ORDEN_CREADA
+           acciones recientes: ACCESO_DENEGADO, CONSUMO_REGISTRADO, DESPACHO_PT, ETAPA_FINALIZADA, ETAPA_INICIADA, LOGIN_FALLIDO
+[PASA ] SM29  Producto terminado: existencias por producto/variante y lotes
+           5 filas de stock, 4 lotes de PT
+[PASA ] SM30  Trazabilidad hacia atrás del lote L-2026-017 (4 etapas con responsable, equipo y lotes de insumo)
+           HTTP 200; etapas: Refinado, Grageado, Abrillantado, Envasado
+[PASA ] SM31  RBAC: el gerente no puede iniciar etapas de producción (403)
+           esperado 403
 [PASA ] SM28  Limitación de tasa en login (aparece HTTP 429)
-           códigos: 401 401 401 401 401 401 401 401 401 401 429 429 401 401
+           códigos: 401 401 401 401 429 429 429 429 429 429 429 429 429 429
 
-Resumen: 28/28 verificaciones superadas  (URL: http://127.0.0.1:8100)
+Resumen: 31/31 verificaciones superadas  (URL: http://127.0.0.1:8100)

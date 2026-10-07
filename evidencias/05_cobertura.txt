@@ -1,27 +1,30 @@
-# Cobertura de pruebas — 2026-10-06 — comando: cd backend && python3 -m pytest tests -q --cov=app --cov-report=term-missing
-........................                                                 [100%]
+# Cobertura de pruebas — 2026-10-07 — comando: cd backend && python3 -m pytest tests -q --cov=app --cov-report=term-missing
+....................................                                     [100%]
 ================================ tests coverage ================================
 _______________ coverage: platform linux, python 3.13.16-final-0 _______________
 
 Name                             Stmts   Miss  Cover   Missing
 --------------------------------------------------------------
-app/__init__.py                     56     18    68%   31, 35, 39-43, 48-50, 57-64
+app/__init__.py                     57     18    68%   32, 36, 40-44, 49-51, 58-65
 app/config.py                       27      5    81%   8, 31-34
 app/db.py                           19      0   100%
 app/extensions.py                    3      0   100%
 app/repositories/__init__.py         0      0   100%
 app/repositories/analitica.py       30      0   100%
-app/repositories/base.py            25      3    88%   32-34
-app/repositories/inventario.py      17      0   100%
-app/repositories/produccion.py      20      1    95%   20
+app/repositories/base.py            25      4    84%   32-34, 37
+app/repositories/inventario.py      37      1    97%   64
+app/repositories/planta.py          73      1    99%   125
+app/repositories/produccion.py      30      2    93%   18, 38
 app/repositories/usuarios.py        27      2    93%   40, 58
 app/routes/__init__.py               0      0   100%
 app/routes/auth.py                  90     14    84%   51-54, 86, 92, 102-110
-app/routes/negocio.py              103      5    95%   43, 74, 90, 104, 108
-app/security.py                     79      4    95%   19-20, 62, 124
-app/seed.py                         43      6    86%   20-24, 59
+app/routes/negocio.py               82      4    95%   49, 56, 67-68
+app/routes/planta.py               173      7    96%   54-57, 82, 105, 173
+app/security.py                     79      4    95%   19-20, 62, 128
+app/seed.py                         76      6    92%   111-115, 145
 app/services/__init__.py             0      0   100%
 app/services/auth_service.py        57      2    96%   57, 60
+app/services/planta_service.py     151     18    88%   30, 43, 57, 60, 75, 82, 105, 110, 125, 159, 180-186, 195
 --------------------------------------------------------------
-TOTAL                              596     60    90%
-24 passed in 2.26s
+TOTAL                             1036     88    92%
+36 passed in 3.29s
