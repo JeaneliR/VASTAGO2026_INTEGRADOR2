@@ -1,0 +1,31 @@
+# Trazabilidad de la gragea de chocolate con maní (lote L-2026-017) — datos reales de la API
+
+## Hacia atrás: GET /api/trazabilidad/lote-pt/L-2026-017
+Producto: Gragea de chocolate 200g con Maní tostado | producido 294 | disponible 114 | vence 2027-06-13
+
+1. Refinado  (8.3 h reales / 8.0 h estándar)  responsable: Operario de Refinado y Envasado  equipo: R-01  merma: 1.1 kg
+     - Azúcar orgánica: 7.5 kg  lote AZU-2026-09A  proveedor Azúcares del Norte  vence 2027-09-01
+     - Cacao en grano (San Martín): 10.5 kg  lote CAC-2026-09A  proveedor Cooperativa Cacaotera San Martín  vence 2027-09-02
+     - Leche en polvo: 3.0 kg  lote LEC-2026-08A  proveedor Lácteos Andinos  vence 2027-02-18
+     - Lecitina de soya: 0.15 kg  lote LSO-2026-06A  proveedor Insumos Industriales SAC  vence 2027-06-25
+     - Manteca de cacao: 4.5 kg  lote MAN-2026-08A  proveedor Agroindustrias Amazónicas  vence 2027-08-10
+
+2. Grageado  (6.5 h reales / 6.0 h estándar)  responsable: Operario de Grageado y Abrillantado  equipo: B-01  merma: 2.4 kg
+     - Maní tostado: 30.0 kg  lote MNI-2026-08A  proveedor Frutos Secos del Sur  vence 2027-02-25
+
+3. Abrillantado  (3.2 h reales / 3.0 h estándar)  responsable: Operario de Grageado y Abrillantado  equipo: B-02  merma: 0.2 kg
+     - Goma arábiga (glaseante): 1.2 kg  lote GOM-2026-08A  proveedor Insumos Industriales SAC  vence 2027-08-30
+
+4. Envasado  (2.0 h reales / 2.0 h estándar)  responsable: Operario de Refinado y Envasado  equipo: E-01  merma: 0.0 kg
+     - Bolsa gragea 200g: 300.0 unid.  lote BGR-2026-09A  proveedor Empaques del Perú  vence None
+
+Despachos:
+   120 uds -> Tienda Miraflores
+   60 uds -> Distribuidora Andina SAC
+
+## Hacia adelante: GET /api/trazabilidad/lote-insumo/MNI-2026-08A
+Lote MNI-2026-08A (Maní tostado, proveedor Frutos Secos del Sur); usado en 1 orden(es), 30.0 kg consumidos
+   orden L-2026-017 · etapa Grageado · 30.0 kg
+   -> lote de PT L-2026-017 (294 producidas)
+        despachado 120 uds a Tienda Miraflores
+        despachado 60 uds a Distribuidora Andina SAC

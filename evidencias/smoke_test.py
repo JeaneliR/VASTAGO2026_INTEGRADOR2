@@ -74,13 +74,13 @@ chk("SM15", "Refresh sin cabecera anti-CSRF: 403", requests.post(B + "/api/auth/
 
 # ---- Datos (BD conectada y sembrada)
 inv = requests.get(B + "/api/inventario", headers=H(adm), timeout=30).json()
-chk("SM16", "Inventario leído desde PostgreSQL (7 insumos sembrados)", isinstance(inv, list) and len(inv) == 7, f"{len(inv)} insumos; estados: " + ", ".join(sorted({i['estado'] for i in inv})))
+chk("SM16", "Inventario leído desde PostgreSQL (12 insumos sembrados)", isinstance(inv, list) and len(inv) == 12, f"{len(inv)} insumos; estados: " + ", ".join(sorted({i['estado'] for i in inv})))
 k = requests.get(B + "/api/kpis", headers=H(adm), timeout=30)
 chk("SM17", "KPIs del dashboard (200, 4 indicadores)", k.status_code == 200 and len(k.json()) == 4, f"HTTP {k.status_code}; claves: " + ", ".join(k.json().keys()))
 f = requests.get(B + "/api/forecast", headers=H(adm), timeout=30).json()
 chk("SM18", "Pronóstico: 3 productos × 3 meses con MAPE", len(f.get("series", {})) == 3 and all(len(s["forecast"]) == 3 for s in f["series"].values()), f"{len(f.get('series', {}))} series; MAPE: " + ", ".join(f"{s['mape']}" for s in f["series"].values()))
 usr = requests.get(B + "/api/auth/usuarios", headers=H(adm), timeout=30).json()
-chk("SM19", "Usuarios demo creados por el seed (4)", len(usr) == 4, ", ".join(u["rol"] for u in usr))
+chk("SM19", "Usuarios demo creados por el seed (6)", len(usr) == 6, ", ".join(u["rol"] for u in usr))
 
 # ---- Rutas y errores
 r1 = requests.get(B + "/crossdomain.xml", timeout=30); r2 = requests.get(B + "/api/no-existe", timeout=30)
@@ -114,6 +114,17 @@ if ESCRIBE:
     chk("SM26", "Crear orden de producción (201, lote autogenerado)", o.status_code == 201 and o.json()["lote"].startswith("L-2026-"), f"HTTP {o.status_code}, lote {o.json().get('lote')}")
     aud = requests.get(B + "/api/auth/auditoria", headers=H(adm), timeout=30).json()
     chk("SM27", "La bitácora registró los movimientos y la orden", {"MOVIMIENTO_INGRESO", "MOVIMIENTO_SALIDA", "ORDEN_CREADA"} <= {x["accion"] for x in aud}, "acciones recientes: " + ", ".join(sorted({x["accion"] for x in aud})[:6]))
+
+# ---- Producto terminado, etapas y trazabilidad (lectura; no modifica datos)
+pt = requests.get(B + "/api/producto-terminado", headers=H(adm), timeout=30).json()
+chk("SM29", "Producto terminado: existencias por producto/variante y lotes", len(pt.get("stock", [])) >= 4 and len(pt.get("lotes", [])) >= 4, f"{len(pt.get('stock', []))} filas de stock, {len(pt.get('lotes', []))} lotes de PT")
+tz = requests.get(B + "/api/trazabilidad/lote-pt/L-2026-017", headers=H(adm), timeout=30)
+tj = tz.json() if tz.status_code == 200 else {}
+chk("SM30", "Trazabilidad hacia atrás del lote L-2026-017 (4 etapas con responsable, equipo y lotes de insumo)",
+    tz.status_code == 200 and len(tj.get("etapas", [])) == 4 and all(e["responsable"] and e["equipo"] and e["consumos"] for e in tj["etapas"]),
+    f"HTTP {tz.status_code}; etapas: " + ", ".join(e["nombre"] for e in tj.get("etapas", [])))
+ger = login("gerente@vastagoyco.pe").json().get("access_token", "")
+chk("SM31", "RBAC: el gerente no puede iniciar etapas de producción (403)", requests.post(B + "/api/produccion/1/etapas/1/iniciar", json={"equipo_id": 1}, headers=H(ger), timeout=30).status_code == 403, "esperado 403")
 
 # ---- Limitación de tasa (al final)
 codes = [requests.post(B + "/api/auth/login", json={"email": "victima@vastagoyco.pe", "password": "x%d" % i}, timeout=30).status_code for i in range(14)]

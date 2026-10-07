@@ -13,3 +13,5 @@ docs/build/out/
 docs/build/.registry.json
 docs/build/.headings.json
 docs/build/.toc.json
+
+.coverage

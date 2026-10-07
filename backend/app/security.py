@@ -76,10 +76,14 @@ def descifrar(blob) -> str:
 # ------------------------------------------------------------------ Autorización (RBAC)
 PERMISOS = {
     "dashboard:ver": {"Administrador", "Jefe de Producción", "Almacenero", "Gerente"},
-    "inventario:ver": {"Administrador", "Jefe de Producción", "Almacenero"},
+    "inventario:ver": {"Administrador", "Jefe de Producción", "Almacenero", "Operario"},
     "inventario:escribir": {"Administrador", "Almacenero"},
-    "produccion:ver": {"Administrador", "Jefe de Producción", "Almacenero", "Gerente"},
-    "produccion:escribir": {"Administrador", "Jefe de Producción"},
+    "produccion:ver": {"Administrador", "Jefe de Producción", "Almacenero", "Gerente", "Operario"},
+    "produccion:escribir": {"Administrador", "Jefe de Producción"},          # crear órdenes
+    "produccion:etapas": {"Administrador", "Jefe de Producción", "Operario"},  # iniciar etapas, consumir lotes, cerrar etapas
+    "pt:ver": {"Administrador", "Jefe de Producción", "Almacenero", "Gerente"},
+    "pt:escribir": {"Administrador", "Almacenero"},                            # despachos de producto terminado
+    "trazabilidad:ver": {"Administrador", "Jefe de Producción", "Almacenero", "Gerente", "Operario"},
     "analitica:ver": {"Administrador", "Jefe de Producción", "Gerente"},
     "usuarios:gestionar": {"Administrador"},
     "auditoria:ver": {"Administrador"},

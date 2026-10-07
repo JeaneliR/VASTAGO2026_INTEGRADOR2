@@ -82,7 +82,7 @@ def crear_usuario():
     d = request.get_json(silent=True) or {}
     nombre, email, rol = str(d.get("nombre", "")).strip()[:100], str(d.get("email", "")).strip()[:120], d.get("rol")
     password, telefono = str(d.get("password", "")), str(d.get("telefono", ""))[:20]
-    if not nombre or not EMAIL_RE.match(email) or rol not in {"Administrador", "Jefe de Producción", "Almacenero", "Gerente"}:
+    if not nombre or not EMAIL_RE.match(email) or rol not in {"Administrador", "Jefe de Producción", "Almacenero", "Gerente", "Operario"}:
         return jsonify(error="Datos inválidos"), 400
     fallos = validar_politica_password(password)
     if fallos:

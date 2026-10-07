@@ -1,33 +1,44 @@
-============================= test session starts ==============================
-platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
-cachedir: .pytest_cache
+# Pruebas automáticas — 2026-10-07 — comando: cd backend && python3 -m pytest tests -v
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python
 rootdir: /home/claude/vastago-sistema/backend
-plugins: anyio-4.15.1
-collecting ... collected 24 items
+plugins: anyio-4.15.1, cov-7.1.0
+collecting ... collected 36 items
 
-tests/test_negocio.py::test_inventario_lista_con_estado PASSED           [  4%]
-tests/test_negocio.py::test_ingreso_actualiza_stock_via_trigger PASSED   [  8%]
-tests/test_negocio.py::test_salida_mayor_al_stock_rechazada PASSED       [ 12%]
-tests/test_negocio.py::test_validacion_de_cantidades PASSED              [ 16%]
-tests/test_negocio.py::test_crear_orden_y_completar_descuenta_bom PASSED [ 20%]
-tests/test_negocio.py::test_bom_de_producto PASSED                       [ 25%]
-tests/test_negocio.py::test_kpis_y_alertas PASSED                        [ 29%]
-tests/test_negocio.py::test_forecast_estructura PASSED                   [ 33%]
-tests/test_seguridad.py::test_login_correcto_devuelve_token_y_cookie_httponly PASSED [ 37%]
-tests/test_seguridad.py::test_login_incorrecto_mensaje_generico PASSED   [ 41%]
-tests/test_seguridad.py::test_sin_token_401 PASSED                       [ 45%]
-tests/test_seguridad.py::test_token_manipulado_o_alg_none_rechazado PASSED [ 50%]
-tests/test_seguridad.py::test_token_expirado PASSED                      [ 54%]
-tests/test_seguridad.py::test_escalada_de_privilegios_bloqueada_por_rol PASSED [ 58%]
-tests/test_seguridad.py::test_bloqueo_por_intentos_fallidos PASSED       [ 62%]
-tests/test_seguridad.py::test_refresh_rota_el_token_y_detecta_reutilizacion PASSED [ 66%]
-tests/test_seguridad.py::test_refresh_sin_cabecera_csrf_rechazado PASSED [ 70%]
-tests/test_seguridad.py::test_logout_revoca_sesion PASSED                [ 75%]
-tests/test_seguridad.py::test_politica_de_contrasenas_y_hash_bcrypt PASSED [ 79%]
-tests/test_seguridad.py::test_cifrado_aes_gcm_ida_y_vuelta_y_manipulacion PASSED [ 83%]
-tests/test_seguridad.py::test_inyeccion_sql_no_funciona PASSED           [ 87%]
-tests/test_seguridad.py::test_cabeceras_de_seguridad PASSED              [ 91%]
-tests/test_seguridad.py::test_errores_sin_traza PASSED                   [ 95%]
+tests/test_negocio.py::test_inventario_lista_con_estado PASSED           [  2%]
+tests/test_negocio.py::test_ingreso_actualiza_stock_via_trigger PASSED   [  5%]
+tests/test_negocio.py::test_salida_mayor_al_stock_rechazada PASSED       [  8%]
+tests/test_negocio.py::test_validacion_de_cantidades PASSED              [ 11%]
+tests/test_negocio.py::test_crear_orden_y_completar_etapas_descuenta_bom PASSED [ 13%]
+tests/test_negocio.py::test_bom_de_producto PASSED                       [ 16%]
+tests/test_negocio.py::test_kpis_y_alertas PASSED                        [ 19%]
+tests/test_negocio.py::test_forecast_estructura PASSED                   [ 22%]
+tests/test_planta.py::test_orden_de_gragea_instancia_la_ruta_y_planifica_el_centro PASSED [ 25%]
+tests/test_planta.py::test_gragea_exige_centro_valido_y_los_demas_productos_no_lo_llevan PASSED [ 27%]
+tests/test_planta.py::test_no_se_puede_saltar_etapas_ni_usar_equipo_de_otro_tipo PASSED [ 30%]
+tests/test_planta.py::test_consumo_valida_etapa_en_curso_insumo_correcto_y_saldo PASSED [ 33%]
+tests/test_planta.py::test_no_se_cierra_etapa_sin_registrar_lotes_de_todos_los_insumos PASSED [ 36%]
+tests/test_planta.py::test_flujo_completo_gragea_y_trazabilidad_hacia_atras_y_adelante PASSED [ 38%]
+tests/test_planta.py::test_trazabilidad_buscar_y_no_encontrado PASSED    [ 41%]
+tests/test_planta.py::test_semilla_historica_es_trazable PASSED          [ 44%]
+tests/test_planta.py::test_ingreso_con_lote_y_salida_fefo_mantienen_stock_igual_a_suma_de_lotes PASSED [ 47%]
+tests/test_planta.py::test_invariante_stock_igual_a_suma_de_lotes PASSED [ 50%]
+tests/test_planta.py::test_permisos_de_planta_por_rol PASSED             [ 52%]
+tests/test_planta.py::test_auditoria_registra_acciones_de_planta PASSED  [ 55%]
+tests/test_seguridad.py::test_login_correcto_devuelve_token_y_cookie_httponly PASSED [ 58%]
+tests/test_seguridad.py::test_login_incorrecto_mensaje_generico PASSED   [ 61%]
+tests/test_seguridad.py::test_sin_token_401 PASSED                       [ 63%]
+tests/test_seguridad.py::test_token_manipulado_o_alg_none_rechazado PASSED [ 66%]
+tests/test_seguridad.py::test_token_expirado PASSED                      [ 69%]
+tests/test_seguridad.py::test_escalada_de_privilegios_bloqueada_por_rol PASSED [ 72%]
+tests/test_seguridad.py::test_bloqueo_por_intentos_fallidos PASSED       [ 75%]
+tests/test_seguridad.py::test_refresh_rota_el_token_y_detecta_reutilizacion PASSED [ 77%]
+tests/test_seguridad.py::test_refresh_sin_cabecera_csrf_rechazado PASSED [ 80%]
+tests/test_seguridad.py::test_logout_revoca_sesion PASSED                [ 83%]
+tests/test_seguridad.py::test_politica_de_contrasenas_y_hash_bcrypt PASSED [ 86%]
+tests/test_seguridad.py::test_cifrado_aes_gcm_ida_y_vuelta_y_manipulacion PASSED [ 88%]
+tests/test_seguridad.py::test_inyeccion_sql_no_funciona PASSED           [ 91%]
+tests/test_seguridad.py::test_cabeceras_de_seguridad PASSED              [ 94%]
+tests/test_seguridad.py::test_errores_sin_traza PASSED                   [ 97%]
 tests/test_seguridad.py::test_auditoria_registra_y_es_inmutable PASSED   [100%]
 
-============================== 24 passed in 1.32s ==============================
+============================== 36 passed in 3.00s ==============================
