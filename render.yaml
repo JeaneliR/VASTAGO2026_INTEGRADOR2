@@ -24,3 +24,11 @@ services:
         generateValue: true                 # clave AES-256 (256 bits en base64)
       - key: DEMO_PASSWORD
         sync: false                         # la defines tú en el panel de Render (no se guarda en Git)
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: "Vastago <onboarding@resend.dev>"
+      - key: EMAIL_TO
+        sync: false
+      - key: EMAIL_SCHEDULER_ENABLED
+        value: "true"

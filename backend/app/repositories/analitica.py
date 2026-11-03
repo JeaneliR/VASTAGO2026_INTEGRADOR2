@@ -17,6 +17,38 @@ class AlertaRepository(BaseRepository):
 
 
 class DashboardRepository(BaseRepository):
+    def inventario_actual(self):
+        return self._run("""
+            SELECT count(*) AS total,
+                   count(*) FILTER (WHERE v.estado = 'ok') AS optimos,
+                   coalesce(sum(i.stock_actual * i.costo_unitario), 0) AS valor,
+                   count(*) FILTER (
+                       WHERE i.stock_actual > 0 AND i.costo_unitario = 0
+                   ) AS sin_costo,
+                   count(*) FILTER (
+                       WHERE i.stock_actual > 0 AND i.costo_unitario > 0
+                   ) AS valorados
+            FROM v_inventario v JOIN insumos i ON i.id = v.id
+        """, one=True)
+
+    def cumplimiento(self, desde, hasta):
+        return self._run("""
+            WITH inicios AS (
+                SELECT orden_id, min(inicio) AS inicio
+                FROM orden_etapas
+                WHERE inicio IS NOT NULL
+                GROUP BY orden_id
+            )
+            SELECT count(*) AS iniciadas,
+                   count(*) FILTER (
+                       WHERE o.estado = 'Completada' AND o.fecha_fin >= i.inicio
+                         AND (o.fecha_fin AT TIME ZONE 'America/Lima')::date < %s
+                   ) AS completadas
+            FROM inicios i JOIN ordenes_produccion o ON o.id = i.orden_id
+            WHERE (i.inicio AT TIME ZONE 'America/Lima')::date >= %s
+              AND (i.inicio AT TIME ZONE 'America/Lima')::date < %s
+        """, (hasta, desde, hasta), one=True)
+
     def metricas(self, desde, hasta):
         return self._run("SELECT "
             "(SELECT count(*) FROM insumos WHERE stock_actual<stock_minimo) AS criticos, "

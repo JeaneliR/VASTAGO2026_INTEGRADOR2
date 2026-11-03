@@ -20,7 +20,7 @@ export function Dashboard({ usuario, permisos, irA }) {
   }, [mes, tick]);
   const max = Math.max(1, ...(data?.serie || []).map(r => r.unidades));
   return <>
-    <div className="toolbar"><div><p className="muted">Resumen de {usuario.rol.toLowerCase()}. El stock y las órdenes activas muestran el estado actual.</p>
+    <div className="toolbar"><div><p className="muted">Resumen de {usuario.rol.toLowerCase()}. Los indicadores de existencias, el valor del inventario y las órdenes activas muestran el estado actual.</p>
       {data && <small className="muted">Última actualización: {new Date(data.actualizado_en).toLocaleTimeString("es-PE")}</small>}</div>
       <div className="row"><div className="field compact"><label htmlFor="dashboard-mes">Mes de producción y movimientos</label><input id="dashboard-mes" type="month" min="2000-01" max="2100-12" required value={mes} onChange={e => { if (e.target.value) setMes(e.target.value); }} /></div>
         <button className="btn g" disabled={loading} onClick={() => setTick(tick + 1)}>{loading ? "Actualizando…" : "Actualizar"}</button></div></div>

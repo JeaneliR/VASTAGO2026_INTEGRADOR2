@@ -69,11 +69,21 @@ def test_dashboard_calcula_merma_y_limita_indicadores_por_rol(client,tokens):
     assert response.status_code==200
     data=response.get_json();cards={r['id']:r for r in data['indicadores']}
     assert len(data['serie'])==6 and cards['merma']['valor']!='Sin datos'
+    assert cards['cumplimiento']['valor']=='66.67%'  # Dos cierres de tres inicios; las planificadas no cuentan.
     with transaction() as cur:
         cur.execute("SELECT sum(merma_kg)::float AS m FROM orden_etapas WHERE estado='Completada' AND (fin AT TIME ZONE 'America/Lima')::date BETWEEN '2026-09-01' AND '2026-09-30'")
         assert f"{cur.fetchone()['m']:g} kg" in cards['merma']['detalle']
+        cur.execute("SELECT count(*) FILTER (WHERE estado='ok') AS optimos, count(*) AS total FROM v_inventario")
+        inventario=cur.fetchone()
+        assert cards['optimos']['valor']==f"{100 * inventario['optimos'] / inventario['total']:.2f}%"
+        cur.execute("SELECT sum(stock_actual * costo_unitario) AS valor FROM insumos")
+        assert cards['valor_inventario']['valor']==f"S/ {cur.fetchone()['valor']:,.2f}"
+    otro_mes=client.get('/api/dashboard?mes=2000-01',headers=tokens['admin']).get_json()
+    otros={r['id']:r for r in otro_mes['indicadores']}
+    assert otros['cumplimiento']['valor']=='Sin datos'
+    assert otros['valor_inventario']==cards['valor_inventario']
     almacen=client.get('/api/dashboard?mes=2026-09',headers=tokens['almacen']).get_json()
-    assert {r['id'] for r in almacen['indicadores']}=={'criticos','bajos','ingresos','salidas'} and almacen['serie']==[]
+    assert {r['id'] for r in almacen['indicadores']}=={'criticos','bajos','optimos','valor_inventario','ingresos','salidas'} and almacen['serie']==[]
     assert client.get('/api/dashboard',headers=tokens['op1']).status_code==403
     assert client.get('/api/dashboard?mes=xxx',headers=tokens['admin']).status_code==400
 
