@@ -23,6 +23,7 @@ def verify_password(password: str, hashed: str) -> bool:
 def validar_politica_password(p: str):
     """OWASP ASVS 2.1: longitud >= 10, mayúscula, minúscula, número y símbolo."""
     errores = []
+    if len(p.encode("utf-8")) > 72: errores.append("máximo 72 bytes")
     if len(p) < 10: errores.append("mínimo 10 caracteres")
     if not any(c.islower() for c in p): errores.append("una minúscula")
     if not any(c.isupper() for c in p): errores.append("una mayúscula")
@@ -36,7 +37,7 @@ def crear_access_token(usuario: dict) -> str:
     ahora = datetime.now(timezone.utc)
     payload = {"sub": str(usuario["id"]), "rol": usuario["rol"], "nombre": usuario["nombre"],
                "iat": ahora, "exp": ahora + timedelta(minutes=current_app.config["ACCESS_TOKEN_MINUTES"]),
-               "jti": secrets.token_hex(8)}
+               "jti": secrets.token_hex(8), "ver": usuario.get("token_version", 0)}
     return jwt.encode(payload, current_app.config["JWT_SECRET"], algorithm="HS256")
 
 
@@ -87,6 +88,9 @@ PERMISOS = {
     "analitica:ver": {"Administrador", "Jefe de Producción", "Gerente"},
     "usuarios:gestionar": {"Administrador"},
     "auditoria:ver": {"Administrador"},
+    "reportes:ver": {"Administrador", "Gerente", "Jefe de Producción", "Almacenero"},
+    "correo:ver": {"Administrador", "Gerente"},
+    "correo:configurar": {"Administrador"},
 }
 
 
@@ -103,7 +107,11 @@ def login_required(permiso=None):
                 return jsonify(error="Token expirado"), 401
             except jwt.InvalidTokenError:
                 return jsonify(error="Token inválido"), 401
-            g.usuario = {"id": int(claims["sub"]), "rol": claims["rol"], "nombre": claims.get("nombre")}
+            from app.repositories.usuarios import UsuarioRepository
+            actual = UsuarioRepository().get_con_rol(int(claims["sub"]))
+            if not actual or not actual["activo"] or claims.get("ver", 0) != actual["token_version"]:
+                return jsonify(error="Tu sesión cambió o fue revocada. Inicia sesión nuevamente."), 401
+            g.usuario = {"id": actual["id"], "rol": actual["rol"], "nombre": actual["nombre"], "email": actual["email"]}
             if permiso and g.usuario["rol"] not in PERMISOS[permiso]:
                 from app.repositories.analitica import AuditoriaRepository
                 AuditoriaRepository().registrar("ACCESO_DENEGADO", g.usuario["id"], entidad=permiso,

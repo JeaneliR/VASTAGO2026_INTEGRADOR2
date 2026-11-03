@@ -21,4 +21,4 @@ USER appuser
 WORKDIR /app/backend
 EXPOSE 8000
 # Primer arranque: crea esquema y datos solo si la BD está vacía; luego inicia gunicorn
-CMD ["sh", "-c", "python -m app.seed --if-empty && gunicorn -c gunicorn.conf.py wsgi:app"]
+CMD ["sh", "-c", "python -m app.seed --if-empty && python -m app.migrate && python -m app.demo_data && gunicorn -c gunicorn.conf.py wsgi:app"]

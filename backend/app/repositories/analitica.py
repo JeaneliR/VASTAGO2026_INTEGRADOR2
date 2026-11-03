@@ -5,7 +5,43 @@ class AlertaRepository(BaseRepository):
     tabla = "alertas"
 
     def listar(self):
-        return self._run("SELECT id, nivel, titulo, detalle, creada_en FROM alertas ORDER BY id DESC")
+        return self._run("SELECT i.id,v.estado AS nivel,i.nombre || CASE WHEN v.estado='crit' THEN ' bajo el mínimo' "
+                         "ELSE ' cerca del mínimo' END AS titulo, "
+                         "concat(i.stock_actual,' ',i.unidad,' disponibles; mínimo ',i.stock_minimo,' ',i.unidad) AS detalle, "
+                         "i.actualizado_en AS creada_en FROM v_inventario v JOIN insumos i ON i.id=v.id "
+                         "WHERE v.estado IN ('crit','warn') ORDER BY CASE WHEN v.estado='crit' THEN 0 ELSE 1 END,i.nombre")
+
+    def criticos(self):
+        return self._run("SELECT id,nombre,stock_actual::float AS stock,stock_minimo::float AS minimo,unidad "
+                         "FROM insumos WHERE stock_actual<stock_minimo ORDER BY nombre")
+
+
+class DashboardRepository(BaseRepository):
+    def metricas(self, desde, hasta):
+        return self._run("SELECT "
+            "(SELECT count(*) FROM insumos WHERE stock_actual<stock_minimo) AS criticos, "
+            "(SELECT count(*) FROM insumos WHERE stock_actual>=stock_minimo AND stock_actual<stock_minimo*1.2) AS bajos, "
+            "(SELECT count(*) FROM ordenes_produccion WHERE estado IN ('Planificada','En proceso')) AS activas, "
+            "(SELECT coalesce(sum(cantidad_producida),0) FROM ordenes_produccion WHERE estado='Completada' "
+            " AND (fecha_fin AT TIME ZONE 'America/Lima')::date >= %s AND (fecha_fin AT TIME ZONE 'America/Lima')::date < %s) AS producidas, "
+            "(SELECT coalesce(sum(merma_kg),0)::float FROM orden_etapas WHERE estado='Completada' "
+            " AND (fin AT TIME ZONE 'America/Lima')::date >= %s AND (fin AT TIME ZONE 'America/Lima')::date < %s) AS merma, "
+            "(SELECT coalesce(sum(c.cantidad),0)::float FROM etapa_consumos c JOIN orden_etapas e ON e.id=c.orden_etapa_id "
+            " JOIN lotes_insumo l ON l.id=c.lote_insumo_id JOIN insumos i ON i.id=l.insumo_id WHERE i.unidad='kg' AND e.estado='Completada' "
+            " AND (e.fin AT TIME ZONE 'America/Lima')::date >= %s AND (e.fin AT TIME ZONE 'America/Lima')::date < %s) AS consumido, "
+            "(SELECT count(*) FROM movimientos_inventario WHERE tipo='INGRESO' AND (fecha AT TIME ZONE 'America/Lima')::date >= %s "
+            " AND (fecha AT TIME ZONE 'America/Lima')::date < %s) AS ingresos, "
+            "(SELECT count(*) FROM movimientos_inventario WHERE tipo='SALIDA' AND (fecha AT TIME ZONE 'America/Lima')::date >= %s "
+            " AND (fecha AT TIME ZONE 'America/Lima')::date < %s) AS salidas", (desde,hasta)*5, one=True)
+
+    def estados(self):
+        return self._run("SELECT estado,count(*)::int AS total FROM ordenes_produccion GROUP BY estado ORDER BY estado")
+
+    def serie(self, desde, hasta):
+        return self._run("SELECT to_char(m,'YYYY-MM') AS mes,coalesce(sum(o.cantidad_producida),0)::int AS unidades "
+                         "FROM generate_series(%s::date-interval '5 months',%s::date,interval '1 month') m "
+                         "LEFT JOIN ordenes_produccion o ON o.estado='Completada' AND "
+                         "date_trunc('month',o.fecha_fin AT TIME ZONE 'America/Lima')=m GROUP BY m ORDER BY m", (desde,desde))
 
 
 class PronosticoRepository(BaseRepository):

@@ -102,7 +102,7 @@ def _historial_planta(conn, jefe_id):
 
 
 def main(if_empty=False):
-    app = create_app({"RATELIMIT_ENABLED": False})
+    app = create_app({"RATELIMIT_ENABLED": False, "EMAIL_SCHEDULER_ENABLED": False})
     with app.app_context():
         conn = psycopg2.connect(Config.DATABASE_URL)
         conn.autocommit = False
@@ -113,8 +113,11 @@ def main(if_empty=False):
                 cur.execute("SELECT count(*) FROM usuarios")
                 if cur.fetchone()[0] > 0:
                     print("La base de datos ya contiene datos: no se modifica."); conn.close(); return
+        cur.execute("DROP TABLE IF EXISTS correo_envios, correo_config, app_migraciones")
         for f in ("schema.sql", "seed_catalogo.sql"):
             cur.execute(open(os.path.join(ROOT, "db", f), encoding="utf-8").read())
+        from app.migrate import upgrade
+        upgrade(cur)
         usuarios = [("Jeaneli Caso Valenzuela", "jefe.produccion@vastagoyco.pe", "Jefe de Producción", "987654321"),
                     ("Arnold Lujan Aderiano", "admin@vastagoyco.pe", "Administrador", "987654322"),
                     ("Luis Matamoros Ylizarbe", "almacen@vastagoyco.pe", "Almacenero", "987654323"),

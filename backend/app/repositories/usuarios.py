@@ -11,12 +11,12 @@ class UsuarioRepository(BaseRepository):
 
     def get_con_rol(self, id_):
         return self._run(
-            "SELECT u.id, u.nombre, u.email, u.activo, u.ultimo_acceso, u.telefono_cifrado, r.nombre AS rol "
+            "SELECT u.id, u.nombre, u.email, u.activo, u.ultimo_acceso, u.telefono_cifrado, u.token_version, r.nombre AS rol "
             "FROM usuarios u JOIN roles r ON r.id = u.rol_id WHERE u.id = %s", (id_,), one=True)
 
     def listar(self):
         return self._run(
-            "SELECT u.id, u.nombre, u.email, u.activo, u.ultimo_acceso, r.nombre AS rol "
+            "SELECT u.id, u.nombre, u.email, u.activo, u.ultimo_acceso, u.telefono_cifrado, r.nombre AS rol "
             "FROM usuarios u JOIN roles r ON r.id = u.rol_id ORDER BY u.id")
 
     def crear(self, nombre, email, password_hash, rol, telefono_cifrado=None):
@@ -37,7 +37,26 @@ class UsuarioRepository(BaseRepository):
                   "WHERE id = %s", (id_,))
 
     def cambiar_estado(self, id_, activo):
-        return self._run("UPDATE usuarios SET activo = %s WHERE id = %s RETURNING id, activo", (activo, id_), one=True)
+        return self._run("UPDATE usuarios SET activo = %s, token_version=token_version+1 WHERE id = %s RETURNING id, activo", (activo, id_), one=True)
+
+    def bloquear_administracion(self):
+        self._run("SELECT pg_advisory_xact_lock(730202604)")
+
+    def contar_administradores(self):
+        return self._run("SELECT count(*) AS n FROM usuarios u JOIN roles r ON r.id=u.rol_id "
+                         "WHERE u.activo AND r.nombre='Administrador'", one=True)["n"]
+
+    def editar(self, id_, nombre, email, rol, telefono):
+        return self._run("UPDATE usuarios SET nombre=%s,email=%s,rol_id=(SELECT id FROM roles WHERE nombre=%s), "
+                         "telefono_cifrado=%s,token_version=token_version+1 WHERE id=%s RETURNING id,nombre,email",
+                         (nombre, email, rol, telefono, id_), one=True)
+
+    def cambiar_password(self, id_, password_hash):
+        return self._run("UPDATE usuarios SET password_hash=%s,token_version=token_version+1, "
+                         "intentos_fallidos=0,bloqueado_hasta=NULL WHERE id=%s RETURNING id", (password_hash,id_), one=True)
+
+    def password_actual(self, id_):
+        return self._run("SELECT password_hash FROM usuarios WHERE id=%s FOR UPDATE", (id_,), one=True)
 
 
 class SesionRepository(BaseRepository):

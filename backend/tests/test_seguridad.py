@@ -58,7 +58,7 @@ def test_refresh_rota_el_token_y_detecta_reutilizacion(client):
     h = {"X-Requested-With": "vastago-web"}
     assert client.post("/api/auth/refresh", headers=h).status_code == 200      # rota el token
     # un atacante que reutiliza el token ya rotado/revocado es rechazado
-    atacante = client.application.test_client()                # cliente sin jar: solo presenta el token robado
+    atacante = client.application.test_client(use_cookies=False)  # presenta realmente la cookie anterior
     r = atacante.post("/api/auth/refresh", headers={**h, "Cookie": viejo})
     assert r.status_code == 401
 

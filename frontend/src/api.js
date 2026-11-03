@@ -40,9 +40,27 @@ export async function login(email, password) {
 }
 export async function logout() { try { await request("/auth/logout", { method: "POST" }); } finally { accessToken = null; } }
 
+export async function descargarReporte(filtros, formato) {
+  const path = "/reportes/exportar?" + new URLSearchParams({ ...filtros, formato });
+  const ejecutar = () => fetch("/api" + path, { credentials: "same-origin", headers: { Authorization: "Bearer " + accessToken } });
+  let response = await ejecutar();
+  if (response.status === 401) {
+    if (await refreshSession()) response = await ejecutar();
+    else onSessionLost();
+  }
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.error || "No se pudo descargar el reporte");
+  }
+  const blob = await response.blob(), url = URL.createObjectURL(blob);
+  const link = document.createElement("a"); link.href = url; link.download = `vastago_${filtros.tipo}.${formato}`;
+  document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 const j = (o) => JSON.stringify(o);
 export const api = {
   kpis: () => request("/kpis"), alertas: () => request("/alertas"),
+  dashboard: (mes) => request("/dashboard?" + new URLSearchParams({ mes })),
   inventario: () => request("/inventario"),
   movimiento: (id, datos) => request(`/inventario/${id}/movimientos`, { method: "POST", body: j(datos) }),
   historial: (id) => request(`/inventario/${id}/movimientos`),
@@ -64,5 +82,13 @@ export const api = {
   usuarios: () => request("/auth/usuarios"),
   crearUsuario: (u) => request("/auth/usuarios", { method: "POST", body: j(u) }),
   estadoUsuario: (id, activo) => request(`/auth/usuarios/${id}`, { method: "PATCH", body: j({ activo }) }),
+  editarUsuario: (id, datos) => request(`/auth/usuarios/${id}`, { method: "PUT", body: j(datos) }),
+  restablecerPassword: (id, nueva) => request(`/auth/usuarios/${id}/password`, { method: "POST", body: j({ nueva }) }),
+  cambiarPassword: (actual, nueva) => request("/auth/password", { method: "POST", body: j({ actual, nueva }) }),
+  reportes: (filtros) => request("/reportes?" + new URLSearchParams(filtros)),
+  correo: () => request("/correo"),
+  configurarCorreo: (datos) => request("/correo/configuracion", { method: "PUT", body: j(datos) }),
+  enviarCorreo: () => request("/correo/enviar", { method: "POST" }),
+  reintentarCorreo: (id) => request(`/correo/${id}/reintentar`, { method: "POST" }),
   auditoria: () => request("/auth/auditoria"),
 };

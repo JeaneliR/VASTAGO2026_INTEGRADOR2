@@ -42,7 +42,7 @@ def login(email, password, ip, user_agent):
             aud.registrar("LOGIN_OK", u["id"], email, ip=ip)
     if error:
         raise error
-    usuario = {"id": u["id"], "nombre": u["nombre"], "email": u["email"], "rol": u["rol"]}
+    usuario = {"id": u["id"], "nombre": u["nombre"], "email": u["email"], "rol": u["rol"], "token_version": u["token_version"]}
     return usuario, sec.crear_access_token(usuario), token
 
 
@@ -62,7 +62,7 @@ def refresh(refresh_token, ip, user_agent):
         nuevo, nuevo_hash = sec.nuevo_refresh_token()
         sess.crear(u["id"], nuevo_hash, datetime.now(timezone.utc) + timedelta(days=cfg["REFRESH_TOKEN_DAYS"]), ip, user_agent)
         aud.registrar("TOKEN_REFRESCADO", u["id"], u["email"], ip=ip)
-    usuario = {"id": u["id"], "nombre": u["nombre"], "email": u["email"], "rol": u["rol"]}
+    usuario = {"id": u["id"], "nombre": u["nombre"], "email": u["email"], "rol": u["rol"], "token_version": u["token_version"]}
     return usuario, sec.crear_access_token(usuario), nuevo
 
 

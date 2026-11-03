@@ -24,6 +24,11 @@ class Config:
     COOKIE_SECURE = ENV == "production"          # cookie solo por HTTPS en producción
     RATELIMIT_ENABLED = os.environ.get("RATELIMIT_ENABLED", "true").lower() == "true"
     STATIC_DIR = os.environ.get("STATIC_DIR", os.path.join(os.path.dirname(__file__), "..", "static"))
+    RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+    EMAIL_FROM = os.environ.get("EMAIL_FROM", "Vástago y Co <onboarding@resend.dev>")
+    EMAIL_TO = os.environ.get("EMAIL_TO", "")
+    EMAIL_SCHEDULER_ENABLED = os.environ.get("EMAIL_SCHEDULER_ENABLED", "true").lower() == "true"
+    SEED_EXTRA_DEMO = os.environ.get("SEED_EXTRA_DEMO", "true").lower() == "true"
 
     @classmethod
     def validate(cls):

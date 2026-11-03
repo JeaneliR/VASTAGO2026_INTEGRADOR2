@@ -63,6 +63,8 @@ def movimiento(insumo_id):
                 r = {}
             AuditoriaRepository(cur).registrar("MOVIMIENTO_" + tipo, g.usuario["id"], entidad="insumos",
                                                detalle={"insumo_id": insumo_id, "cantidad": cantidad, **r}, ip=request.remote_addr)
+            from app.services.correo_service import alerta_stock
+            alerta_stock(cur,insumo_id,ins['stock_actual'])
             return jsonify({**insumos.obtener(insumo_id), **r})
     except ReglaNegocio as e:
         return jsonify(error=str(e)), e.status
@@ -99,8 +101,13 @@ def kpis():
     q = InsumoRepository().contar_quiebres()
     o = OrdenRepository().contar_activas()
     mape = round(PronosticoRepository().mape_promedio(), 1)
+    from app.routes.panel import periodo
+    from app.repositories.analitica import DashboardRepository
+    _, start, end = periodo()
+    metrics = DashboardRepository().metricas(start,end)
+    ratio = round(metrics["merma"]*100/metrics["consumido"],2) if metrics["consumido"] else None
     return jsonify(quiebresStock={"valor": str(q), "delta": "Insumos bajo el mínimo", "tipo": "neutral"},
-                   mermaMes={"valor": "2.3%", "delta": "-1.1 pp vs. mes anterior", "tipo": "up"},
+                   mermaMes={"valor": f"{ratio:g}%" if ratio is not None else "Sin datos", "delta": "Merma / consumo en kg de etapas cerradas este mes", "tipo": "neutral"},
                    ordenesActivas={"valor": str(o["en_proceso"] + o["planificadas"]),
                                    "delta": f"{o['en_proceso']} en proceso, {o['planificadas']} planificadas", "tipo": "neutral"},
                    precisionModelo={"valor": f"{round(100 - mape, 1)}%", "delta": f"MAPE promedio {mape}%", "tipo": "up"})

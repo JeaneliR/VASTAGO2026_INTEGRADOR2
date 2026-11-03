@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { login } from "../api.js";
 
-export default function Login({ onLogin }) {
+export default function Login({ onLogin, notice }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,6 +18,7 @@ export default function Login({ onLogin }) {
       <div className="brand" style={{ marginBottom: 6 }}><svg width="34" height="34" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#6b3f2a"/><path d="M20 9c-4 3-7 7-7 11.5A7 7 0 0020 27.5 7 7 0 0027 20.5C27 16 24 12 20 9z" fill="#c89b3c"/></svg>
         <div><strong>Vástago &amp; Co</strong><span>Producción · Inventarios · IA</span></div></div>
       <p className="muted" style={{ marginTop: 0 }}>Inicia sesión para continuar</p>
+      {notice && <p className="success" role="status">{notice}</p>}
       <div className="field"><label htmlFor="email">Correo corporativo</label>
         <input id="email" type="email" autoComplete="username" required maxLength={120} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="usuario@vastagoyco.pe" /></div>
       <div className="field"><label htmlFor="pwd">Contraseña</label>

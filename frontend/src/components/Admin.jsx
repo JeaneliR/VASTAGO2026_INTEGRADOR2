@@ -1,31 +1,66 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { api } from "../api.js";
-
+import Dialog from "./Dialog.jsx";
 const ROLES = ["Administrador", "Jefe de Producción", "Almacenero", "Gerente", "Operario"];
+const VACIO = { nombre: "", email: "", rol: "Almacenero", password: "", telefono: "", repetir: "" };
 
-export function Usuarios() {
-  const [us, setUs] = useState([]), [open, setOpen] = useState(false), [err, setErr] = useState("");
-  const [f, setF] = useState({ nombre: "", email: "", rol: "Almacenero", password: "", telefono: "" });
-  const cargar = () => api.usuarios().then(setUs).catch((e) => setErr(e.message));
-  useEffect(() => { cargar(); }, []);
-  async function crear(e) { e.preventDefault(); setErr(""); try { await api.crearUsuario(f); setOpen(false); setF({ ...f, nombre: "", email: "", password: "", telefono: "" }); cargar(); } catch (x) { setErr(x.message); } }
-  async function alternar(u) { try { await api.estadoUsuario(u.id, !u.activo); cargar(); } catch (x) { setErr(x.message); } }
-  return (<>
-    <div style={{ marginBottom: 12 }}><button className="btn" onClick={() => { setOpen(true); setErr(""); }}>+ Nuevo usuario</button></div>
-    <div className="panel">{err && !open && <p className="err">{err}</p>}
-      <table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
-        <tbody>{us.map((u) => <tr key={u.id}><td>{u.nombre}</td><td>{u.email}</td><td>{u.rol}</td>
-          <td><span className={"badge " + (u.activo ? "b-ok" : "b-crit")}>{u.activo ? "Activo" : "Inactivo"}</span></td>
-          <td><button className="btn g sm" onClick={() => alternar(u)}>{u.activo ? "Desactivar" : "Activar"}</button></td></tr>)}</tbody></table></div>
-    {open && <div className="modal-bg" onClick={(e) => e.target === e.currentTarget && setOpen(false)}><form className="modal" onSubmit={crear}>
-      <h3>Nuevo usuario</h3>
-      {[["nombre", "Nombre completo", "text"], ["email", "Correo", "email"], ["telefono", "Teléfono (se guarda cifrado)", "tel"], ["password", "Contraseña (mín. 10, mayús., minús., número y símbolo)", "password"]].map(([k, l, t]) =>
-        <div className="field" key={k}><label>{l}</label><input type={t} required={k !== "telefono"} autoComplete="off" value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} /></div>)}
-      <div className="field"><label>Rol</label><select value={f.rol} onChange={(e) => setF({ ...f, rol: e.target.value })}>{ROLES.map((r) => <option key={r}>{r}</option>)}</select></div>
-      {err && <p className="err">{err}</p>}
-      <div className="row"><button className="btn">Crear</button><button type="button" className="btn g" onClick={() => setOpen(false)}>Cancelar</button></div>
-    </form></div>}
-  </>);
+export function Usuarios({ usuario, onSesionCerrada }) {
+  const [users, setUsers] = useState([]), [mode, setMode] = useState(null), [selected, setSelected] = useState(null);
+  const [form, setForm] = useState(VACIO), [err, setErr] = useState(""), [notice, setNotice] = useState(""), [busy, setBusy] = useState(false);
+  const [q, setQ] = useState(""), [estado, setEstado] = useState("activos"), [loading, setLoading] = useState(true);
+  const cargar = useCallback(async () => { try { setUsers(await api.usuarios()); } catch (e) { setErr(e.message); } finally { setLoading(false); } }, []);
+  useEffect(() => { cargar(); }, [cargar]);
+  const cerrar = useCallback(() => { setMode(null); setErr(""); }, []);
+  function abrir(mode, user = null) {
+    setSelected(user); setMode(mode); setErr(""); setNotice("");
+    setForm(user ? { nombre: user.nombre, email: user.email, rol: user.rol, telefono: user.telefono || "", password: "", repetir: "" } : { ...VACIO });
+  }
+  async function guardar(e) {
+    e.preventDefault(); setErr(""); setBusy(true);
+    try {
+      if (mode === "password") {
+        if (form.password !== form.repetir) throw new Error("Las contraseñas no coinciden");
+        await api.restablecerPassword(selected.id, form.password);
+      } else if (mode === "editar") {
+        await api.editarUsuario(selected.id, { nombre: form.nombre, email: form.email, rol: form.rol, telefono: form.telefono });
+      } else await api.crearUsuario({ nombre: form.nombre, email: form.email, rol: form.rol, telefono: form.telefono, password: form.password });
+      setMode(null); setNotice(mode === "password" ? "Contraseña actualizada. Las sesiones anteriores fueron cerradas." : "Usuario guardado correctamente.");
+      if (mode === "editar" && selected.id === usuario.id) { onSesionCerrada("Datos actualizados. Inicia sesión nuevamente."); return; }
+      await cargar();
+    } catch (e) { setErr(e.message); } finally { setBusy(false); }
+  }
+  async function alternar(user) {
+    if (!window.confirm(`${user.activo ? "Desactivar" : "Activar"} a ${user.nombre}?${user.activo ? " Se cerrarán sus sesiones." : ""}`)) return;
+    setBusy(true); setErr("");
+    try { await api.estadoUsuario(user.id, !user.activo); setNotice("Estado actualizado."); await cargar(); }
+    catch (e) { setErr(e.message); } finally { setBusy(false); }
+  }
+  const visibles = users.filter(user => (estado === "todos" || user.activo === (estado === "activos")) && `${user.nombre} ${user.email} ${user.rol}`.toLowerCase().includes(q.toLowerCase()));
+  return <>
+    <div className="toolbar"><p className="muted">Administra cuentas y permisos. Las cuentas inactivas conservan su historial.</p><button className="btn" onClick={() => abrir("crear")}>+ Nuevo usuario</button></div>
+    <div className="panel">
+      <div className="row filters"><div className="field"><label htmlFor="usuarios-buscar">Buscar usuario</label><input id="usuarios-buscar" type="search" placeholder="Nombre, correo o rol" value={q} onChange={e => setQ(e.target.value)} /></div>
+        <div className="field"><label htmlFor="usuarios-estado">Estado</label><select id="usuarios-estado" value={estado} onChange={e => setEstado(e.target.value)}><option value="activos">Activos</option><option value="inactivos">Inactivos</option><option value="todos">Todos</option></select></div></div>
+      {err && !mode && <p className="err" role="alert">{err}</p>}{notice && <p className="success" role="status">{notice}</p>}
+      {loading ? <p>Cargando usuarios…</p> : <><p className="muted">{visibles.length} usuarios encontrados</p><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>{visibles.map(user => <tr key={user.id}><td>{user.nombre}{user.id === usuario.id && <small className="muted"> (tu cuenta)</small>}</td><td>{user.email}</td><td>{user.rol}</td>
+          <td><span className={"badge " + (user.activo ? "b-ok" : "b-crit")}>{user.activo ? "Activo" : "Inactivo"}</span></td><td><div className="row">
+            <button className="btn g sm" disabled={busy} onClick={() => abrir("editar", user)}>Editar</button>
+            {user.id !== usuario.id && <><button className="btn g sm" disabled={busy} onClick={() => abrir("password", user)}>Restablecer contraseña</button><button className="btn g sm" disabled={busy} onClick={() => alternar(user)}>{user.activo ? "Desactivar" : "Activar"}</button></>}
+          </div></td></tr>)}</tbody></table>{!visibles.length && <p className="empty">No hay usuarios que coincidan con tu búsqueda.</p>}</>}
+    </div>
+    {mode && <Dialog titulo={mode === "crear" ? "Nuevo usuario" : mode === "editar" ? "Editar usuario" : "Restablecer contraseña"} onClose={cerrar} busy={busy}>
+      <form onSubmit={guardar}>
+        {mode !== "password" && <>{[["nombre", "Nombre completo", "text", 100], ["email", "Correo", "email", 120], ["telefono", "Teléfono", "tel", 24]].map(([key, label, type, max]) => <div className="field" key={key}>
+          <label htmlFor={"usuario-" + key}>{label}</label><input id={"usuario-" + key} type={type} maxLength={max} required={key !== "telefono"} value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} /></div>)}
+          <div className="field"><label htmlFor="usuario-rol">Rol</label><select id="usuario-rol" disabled={selected?.id === usuario.id} value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })}>{ROLES.map(r => <option key={r}>{r}</option>)}</select></div></>}
+        {mode !== "editar" && <><p className="muted">Mínimo 10 caracteres, con mayúscula, minúscula, número y símbolo.</p><div className="field"><label htmlFor="usuario-password">{mode === "crear" ? "Contraseña inicial" : "Nueva contraseña"}</label><input id="usuario-password" type="password" autoComplete="new-password" required minLength={10} maxLength={72} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
+          {mode === "password" && <div className="field"><label htmlFor="usuario-repetir">Repite la nueva contraseña</label><input id="usuario-repetir" type="password" autoComplete="new-password" required value={form.repetir} onChange={e => setForm({ ...form, repetir: e.target.value })} /></div>}</>}
+        {mode === "editar" && <p className="muted">Se cerrarán las sesiones de esta cuenta al guardar los cambios.</p>}
+        {err && <p className="err" role="alert">{err}</p>}<div className="row"><button className="btn" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</button><button type="button" className="btn g" disabled={busy} onClick={cerrar}>Cancelar</button></div>
+      </form>
+    </Dialog>}
+  </>;
 }
 
 export function Auditoria() {

@@ -110,10 +110,12 @@ def registrar_consumo(cur, oid, secuencia, lote_insumo_id, cantidad, usuario, ip
         raise ReglaNegocio(f"El lote {lote['codigo']} está vencido")
     if lote["disponible"] + 1e-9 < cantidad:
         raise ReglaNegocio(f"Saldo insuficiente en el lote {lote['codigo']} (disponible {lote['disponible']:g} {lote['unidad']})")
-    InsumoRepository(cur).bloquear_para_actualizar(lote["insumo_id"])
+    stock_anterior=InsumoRepository(cur).bloquear_para_actualizar(lote["insumo_id"])
     mov = MovimientoRepository(cur).registrar(lote["insumo_id"], "SALIDA", cantidad,
                                               f"Consumo {orden['lote']} · {etapa['nombre']}", usuario["id"], oid, lote_insumo_id)
     ConsumoRepository(cur).registrar(etapa["id"], lote_insumo_id, cantidad, mov["id"], usuario["id"], ahora)
+    from app.services.correo_service import alerta_stock
+    alerta_stock(cur,lote['insumo_id'],stock_anterior['stock_actual'])
     _auditar(cur, "CONSUMO_REGISTRADO", usuario, "etapa_consumos",
              {"lote_orden": orden["lote"], "etapa": etapa["nombre"], "insumo": lote["insumo"], "lote_insumo": lote["codigo"], "cantidad": cantidad}, ip)
     return {"insumo": lote["insumo"], "lote": lote["codigo"], "cantidad": cantidad}

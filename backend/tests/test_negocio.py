@@ -70,7 +70,9 @@ def test_bom_de_producto(client, tokens):
 def test_kpis_y_alertas(client, tokens):
     k = client.get("/api/kpis", headers=tokens["gerente"]).get_json()
     assert set(k) == {"quiebresStock", "mermaMes", "ordenesActivas", "precisionModelo"}
-    assert len(client.get("/api/alertas", headers=tokens["gerente"]).get_json()) == 4
+    inventario=client.get('/api/inventario',headers=tokens['admin']).get_json()
+    alertas=client.get('/api/alertas',headers=tokens['gerente']).get_json()
+    assert {a['id'] for a in alertas} == {i['id'] for i in inventario if i['estado'] in ('crit','warn')}
 
 
 def test_forecast_estructura(client, tokens):
