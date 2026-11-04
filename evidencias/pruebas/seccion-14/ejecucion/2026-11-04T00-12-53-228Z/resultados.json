@@ -1,0 +1,51 @@
+{
+  "url": "https://vastago-sistema.onrender.com/",
+  "fecha": "2026-11-04T00:12:53.228Z",
+  "totals": {
+    "Aprobado": 5,
+    "Fallido": 0,
+    "Bloqueado": 0
+  },
+  "results": [
+    {
+      "id": "US01",
+      "criterio": "Etiquetas y foco de teclado en el acceso",
+      "estado": "Aprobado",
+      "detalle": "Tab recorre Correo corporativo → Contraseña → Ingresar. Ambos campos tienen etiqueta asociada.",
+      "ms": 134,
+      "imagen": "US01.png"
+    },
+    {
+      "id": "US02",
+      "criterio": "Protección ante campos obligatorios vacíos",
+      "estado": "Aprobado",
+      "detalle": "El navegador bloquea el envío y lleva el foco al correo obligatorio. No se observa una solicitud de acceso.",
+      "ms": 259,
+      "imagen": "US02.png"
+    },
+    {
+      "id": "US03",
+      "criterio": "Mensaje de error y recuperación del acceso",
+      "estado": "Aprobado",
+      "detalle": "Mensaje con rol alert: «Credenciales inválidas». Se limpia la contraseña y Enter permite volver a iniciar sesión.",
+      "ms": 3849,
+      "imagen": "US03.png"
+    },
+    {
+      "id": "US04",
+      "criterio": "Navegación con menú móvil a 390 × 844 px",
+      "estado": "Aprobado",
+      "detalle": "El menú se abre, permite entrar a Inventario y se cierra al elegir la pestaña.",
+      "ms": 498,
+      "imagen": "US04.png"
+    },
+    {
+      "id": "US05",
+      "criterio": "Ajuste horizontal del Dashboard móvil",
+      "estado": "Aprobado",
+      "detalle": "Viewport 390 px, contenido 390 px. Sin desplazamiento horizontal global.",
+      "ms": 422,
+      "imagen": "US05.png"
+    }
+  ]
+}

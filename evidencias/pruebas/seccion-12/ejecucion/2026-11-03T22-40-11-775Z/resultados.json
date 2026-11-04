@@ -1,0 +1,55 @@
+{
+  "url": "https://vastago-sistema.onrender.com/",
+  "fecha": "2026-11-03T22:40:22.064Z",
+  "results": [
+    {
+      "id": "CF01",
+      "name": "Rechazo de credenciales inválidas",
+      "status": "Aprobado",
+      "detail": "HTTP 401 y formulario de acceso visible",
+      "ms": 2323
+    },
+    {
+      "id": "CF02",
+      "name": "Inicio de sesión como administrador",
+      "status": "Aprobado",
+      "detail": "HTTP 200 y rol Administrador",
+      "ms": 1974
+    },
+    {
+      "id": "CF03",
+      "name": "Consulta de inventario",
+      "status": "Aprobado",
+      "detail": "20 insumos consultados",
+      "ms": 390
+    },
+    {
+      "id": "CF04",
+      "name": "Porcentaje óptimo y KPI del Sprint 4",
+      "status": "Aprobado",
+      "detail": "12/20 insumos OK, esperado y mostrado 60.00%",
+      "ms": 442
+    },
+    {
+      "id": "CF05",
+      "name": "Filtro de insumos críticos",
+      "status": "Aprobado",
+      "detail": "7 registros críticos",
+      "ms": 717
+    },
+    {
+      "id": "CF06",
+      "name": "Exportación Excel",
+      "status": "Aprobado",
+      "detail": "Excel descargado, 5580 bytes",
+      "ms": 1548
+    },
+    {
+      "id": "CF07",
+      "name": "Exportación PDF",
+      "status": "Aprobado",
+      "detail": "PDF descargado, 2520 bytes",
+      "ms": 1130
+    }
+  ]
+}

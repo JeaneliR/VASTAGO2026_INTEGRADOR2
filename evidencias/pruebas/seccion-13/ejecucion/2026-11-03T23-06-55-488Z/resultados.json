@@ -1,0 +1,52 @@
+{
+  "url": "https://vastago-sistema.onrender.com/",
+  "fecha": "2026-11-03T23:07:09.996Z",
+  "results": [
+    {
+      "id": "CI01",
+      "nombre": "Flask y PostgreSQL: lectura de inventario",
+      "estado": "Aprobado",
+      "detalle": {
+        "http": 200,
+        "insumos": 20,
+        "criticos": 7
+      },
+      "ms": 411
+    },
+    {
+      "id": "CI02",
+      "nombre": "Configuración de Resend en Vástago",
+      "estado": "Aprobado",
+      "detalle": {
+        "http": 200,
+        "proveedorConfigurado": true,
+        "destinatarioConfigurado": true
+      },
+      "ms": 678
+    },
+    {
+      "id": "CI03",
+      "nombre": "Encolado persistente del resumen manual",
+      "estado": "Aprobado",
+      "detalle": {
+        "http": 202,
+        "id": 363,
+        "estadoInicial": "Pendiente"
+      },
+      "ms": 538
+    },
+    {
+      "id": "CI04",
+      "nombre": "Respuesta de Resend registrada en PostgreSQL",
+      "estado": "Aprobado",
+      "detalle": {
+        "id": 363,
+        "estado": "Aceptado",
+        "proveedorId": "01a1a3aa-b042-706c-8193-b3d0461806fb",
+        "intentos": 1,
+        "registrado": "Tue, 03 Nov 2026 23:07:14 GMT"
+      },
+      "ms": 8838
+    }
+  ]
+}

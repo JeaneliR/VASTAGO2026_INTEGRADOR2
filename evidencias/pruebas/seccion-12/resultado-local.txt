@@ -1,0 +1,39 @@
+....................................................                     [100%]
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.12.14-final-0 _______________
+
+Name                             Stmts   Miss  Cover
+----------------------------------------------------
+app\__init__.py                     62     18    71%
+app\config.py                       32      5    84%
+app\db.py                           19      0   100%
+app\demo_data.py                    91     11    88%
+app\extensions.py                    3      0   100%
+app\migrate.py                      14      5    64%
+app\repositories\__init__.py         0      0   100%
+app\repositories\analitica.py       43      0   100%
+app\repositories\base.py            25      4    84%
+app\repositories\correo.py          19      1    95%
+app\repositories\inventario.py      37      0   100%
+app\repositories\planta.py          73      1    99%
+app\repositories\produccion.py      30      2    93%
+app\repositories\reportes.py         6      0   100%
+app\repositories\usuarios.py        37      1    97%
+app\routes\__init__.py               0      0   100%
+app\routes\auth.py                 178     18    90%
+app\routes\correo.py                50     16    68%
+app\routes\negocio.py               89      4    96%
+app\routes\panel.py                 46      5    89%
+app\routes\planta.py               173      7    96%
+app\routes\reportes.py             107      9    92%
+app\security.py                     84      4    95%
+app\seed.py                         79      6    92%
+app\services\__init__.py             0      0   100%
+app\services\auth_service.py        57      1    98%
+app\services\correo_service.py      86     14    84%
+app\services\planta_service.py     153     18    88%
+----------------------------------------------------
+TOTAL                             1593    150    91%
+Coverage HTML written to dir C:\Users\LENOVO\Documents\Codex\Integrador II\APF3_seccion_12/cobertura-local
+Coverage XML written to file C:\Users\LENOVO\Documents\Codex\Integrador II\APF3_seccion_12/cobertura-local.xml
+52 passed in 9.26s
