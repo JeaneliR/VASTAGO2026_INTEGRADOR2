@@ -32,7 +32,8 @@ Versión del repositorio: **v2, Sprint 4 (03-nov-2026)**.
 | Producto terminado | Existencias por producto y variante (centro), lotes de PT con vencimiento, despachos con destino y semáforo contra el mínimo | Implementado |
 | Trazabilidad | Hacia atrás: de un lote de PT a etapas, responsables, equipos y lotes de insumo. Hacia adelante: de un lote de insumo a órdenes, lotes de PT y destinos | Implementado |
 | Seguridad | Login con bcrypt, JWT de 15 min + refresh rotatorio (cookie HttpOnly), bloqueo por intentos, rate limiting, RBAC de 5 roles (incluye Operario), AES-256-GCM, auditoría de solo-anexar, cabeceras CSP/HSTS | Implementado |
-| Analítica | Pronóstico de demanda a 3 meses por producto con MAPE sobre datos de demostración | Implementado desde la v1 |
+| Analítica | Pronóstico de demanda a 3 meses sobre el histórico real de grageado (507 tandas, 2025–2026), con validación rolling-origin y selección de modelo por WAPE; vista del histórico por mes y centro | Actualizado con datos reales |
+| Asistente de consultas | Chat en español sobre el kardex real de insumos y el control de producción: cuánto alcanza un insumo, qué se acaba primero, qué está bajo el mínimo, consumo, ingresos, producción, reproceso y pronóstico | Nuevo |
 | Dashboard (RF10) | Indicadores por rol calculados desde PostgreSQL. Incluye cumplimiento mensual de órdenes, porcentaje de insumos en estado óptimo, valoración de existencias y merma registrada | Ampliado en la v2 |
 | Gestión de usuarios | Edición, activación y desactivación de cuentas; cambio de contraseña propia y restablecimiento por el administrador | Ampliado en la v2 |
 | Datos | PostgreSQL 16, replicación streaming, respaldo/restauración verificada, monitoreo SQL | Implementado |
@@ -47,7 +48,7 @@ La rotación y la exactitud del inventario quedan pendientes de contar con saldo
 
 ```
 Navegador ──HTTPS──▶ Flask 3 + gunicorn ──(patrón Repository, pool psycopg2)──▶ PostgreSQL 16
-   React 19 (SPA)        │  Blueprints: auth / negocio / planta / panel / reportes / correo
+   React 19 (SPA)        │  Blueprints: auth / negocio / planta / panel / reportes / correo / asistente
    servida por Flask     └─ seguridad.py (JWT, RBAC, AES-GCM, cabeceras)
                          ml-service/forecast.py  →  forecast_output.json  →  tabla pronosticos
                          cola de correos en PostgreSQL ──HTTPS──▶ Resend
@@ -62,8 +63,8 @@ repositorio (`backend/app/repositories/`) y es parametrizada.
 .github/workflows/ci.yml   Integración continua (pytest, bandit, pip-audit con PostgreSQL 16)
 backend/                   API Flask (app/, tests/, gunicorn.conf.py, wsgi.py, requirements.txt)
 frontend/                  SPA React 19 + esbuild (src/, public/, build.mjs)
-db/                        schema.sql, seed_catalogo.sql, admin/ (respaldo, monitoreo), replication/
-ml-service/                forecast.py, historico_demanda.csv, forecast_output.json
+db/                        schema.sql, seed_catalogo.sql, upgrade_*.sql (migraciones aditivas), CSV de datos reales, admin/, replication/
+ml-service/                forecast.py (lee db/historico_grageado.csv), forecast_output.json
 evidencias/                Salidas reales de pruebas, replicación, respaldo, monitoreo, seguridad y WPO
 docs/build/                Generador del informe APF2 y diagramas/prototipos (assets/)
 Dockerfile · render.yaml   Despliegue (imagen multi-stage y Blueprint de Render)
@@ -136,16 +137,16 @@ En una base vacía se crean seis cuentas demo con la contraseña inicial `DEMO_P
 | Rol | Correo | Acceso |
 |---|---|---|
 | Administrador | `admin@vastagoyco.pe` | Todo, incluidos Usuarios y Auditoría |
-| Jefe de Producción | `jefe.produccion@vastagoyco.pe` | Dashboard, Inventario (lectura), Producción (crea órdenes y opera etapas), Producto terminado (lectura), Trazabilidad, Analítica y Reportes |
-| Almacenero | `almacen@vastagoyco.pe` | Dashboard, Inventario (lectura y escritura), Producción (lectura), Producto terminado (lectura y despachos), Trazabilidad y Reportes |
-| Gerente | `gerente@vastagoyco.pe` | Dashboard, Producción y Producto terminado (lectura), Trazabilidad, Analítica, Reportes y Correo y alertas (consulta y envío manual) |
+| Jefe de Producción | `jefe.produccion@vastagoyco.pe` | Dashboard, Inventario (lectura), Producción (crea órdenes y opera etapas), Producto terminado (lectura), Trazabilidad, Analítica, Asistente y Reportes |
+| Almacenero | `almacen@vastagoyco.pe` | Dashboard, Inventario (lectura y escritura), Producción (lectura), Producto terminado (lectura y despachos), Trazabilidad, Asistente y Reportes |
+| Gerente | `gerente@vastagoyco.pe` | Dashboard, Producción y Producto terminado (lectura), Trazabilidad, Analítica, Asistente, Reportes y Correo y alertas (consulta y envío manual) |
 | Operario | `operario1@vastagoyco.pe` (refinado y envasado), `operario2@vastagoyco.pe` (grageado y abrillantado) | Inventario (lectura), Producción (inicia sus etapas, registra consumos por lote y las cierra), Trazabilidad |
 
 ## Pruebas y calidad
 
 ```bash
 cd backend
-python -m pytest tests -q                         # 52 pruebas en la verificación local de la v2
+python -m pytest tests -q                         # 89 pruebas (incluye 14 de integración con Resend simulado)
 python -m pytest tests -q --cov=app               # requiere pytest-cov
 bandit -r app -q && pip-audit -r requirements.txt # análisis estático y dependencias
 python tests/pentest_manual.py http://127.0.0.1:8000   # verificaciones OWASP contra una instancia en ejecución
@@ -154,6 +155,18 @@ python tests/pentest_manual.py http://127.0.0.1:8000   # verificaciones OWASP co
 > Las pruebas recrean el esquema (`DROP TABLE ... CREATE`) en la base indicada por `DATABASE_URL`:
 > usa una base local exclusiva cuyo nombre termine en `_test`, por ejemplo `vastago_test`.
 > Los casos de correo simulan Resend. La recepción real se verifica desde el despliegue configurado.
+
+### Suites automatizadas del APF3
+
+| Suite | Herramientas | Cómo ejecutarla |
+|---|---|---|
+| Funcional | pytest, pytest-cov | `cd backend && python -m pytest tests -q --cov=app` |
+| Integración con Resend (API externa simulada por HTTP) | pytest, servidor HTTP local | incluida en `backend/tests/test_integracion_resend.py` |
+| Integración REST de caja negra (14 casos) | pytest, requests | `VASTAGO_URL=<url> VASTAGO_PASSWORD=<clave demo> python -m pytest pruebas/integracion -v` |
+| Usabilidad y accesibilidad (22 casos) | Playwright, axe-core, Lighthouse | `VASTAGO_URL=<url> VASTAGO_PASSWORD=<clave demo> python -m pytest pruebas/usabilidad -v` |
+
+Las dos últimas pueden apuntar a la instancia local o al despliegue de Render con `VASTAGO_URL`. La clave demo no se guarda en el repositorio.
+Los resultados, capturas, reportes de Lighthouse y el historial de commits están en `evidencias/apf3/`.
 
 GitHub Actions (`.github/workflows/ci.yml`) ejecuta pytest, bandit y pip-audit en cada `push` y `pull_request`.
 
@@ -178,6 +191,22 @@ GitHub Actions (`.github/workflows/ci.yml`) ejecuta pytest, bandit y pip-audit e
 Limitaciones del plan gratuito: el servicio se suspende tras 15 min sin tráfico (~1 min de arranque en frío) y la base
 PostgreSQL gratuita expira a los 30 días (con 14 días de gracia) y no incluye respaldos automáticos.
 
+## Datos reales de planta
+
+- `db/historico_grageado.csv`: 507 tandas reales de grageado (control de producción 2025–2026). Los operarios están anonimizados (Operario A, B, C…). Meses sin registro completo (2025-04 y 2026-02) se interpolan y se marcan como `imputado`.
+- `db/kardex_insumos.csv` y `db/kardex_movimientos.csv`: kardex real de insumos (44 insumos con su código `FAMILIA-SUBTIPO-correlativo`). Fuente `kardex_sep` (1-sep a 6-oct de 2026): saldo inicial + ingresos − salidas = stock actual en los 44 insumos (se prueba en `tests/test_asistente.py`). Fuente `kardex_may_ago`: histórico parcial que puede omitir salidas; solo se usa como referencia.
+- Se cargan con `app/datos_reales.py` desde `app.migrate` (una sola vez, registrado en `app_migraciones`). Es aditivo e idempotente: en una base existente (Render) crea las tablas nuevas, reemplaza el pronóstico simulado anterior y no toca usuarios, insumos, lotes ni órdenes. **No hace falta recrear la base.**
+- Con datos reales el error del pronóstico es alto (WAPE ≈ 58–74 %) porque la demanda es irregular y la serie es corta; el sistema lo muestra como error, no como «precisión».
+
+## Asistente de consultas
+
+Pantalla **Asistente** (Administrador, Jefe de Producción, Almacenero y Gerente): se escribe en español, por ejemplo «¿Para cuánto alcanza el suero de leche?», «¿Qué insumos se acaban primero?», «¿Qué debo comprar?», «¿Cuánto grageado produjimos en septiembre?».
+
+- **Cómo responde:** reglas explícitas (intención + insumo + periodo) y cálculos en SQL/Python sobre el kardex real y el control de producción. No usa un modelo generativo: no tiene costo por consulta, no envía datos a terceros y cada cifra se puede verificar. Lo que no entiende, lo dice y sugiere preguntas.
+- **Fecha de corte:** el «hoy» del asistente es el último movimiento del kardex (6 de octubre de 2026), no el reloj del servidor.
+- **Cobertura:** días = stock ÷ consumo diario (salidas del 1-sep al corte ÷ 36 días); se contrasta con el ritmo de los últimos 14 días y con el stock mínimo.
+- **API:** `POST /api/asistente/preguntar` (30 por minuto) y `GET /api/asistente/sugerencias`; cada consulta queda en la auditoría (`ASISTENTE_CONSULTA`).
+
 ## Convenciones de trabajo
 
 - Ramas: `main` (estable, protegida), `feature/HUxx-descripcion`, `fix/…`, `docs/…`; se integra por Pull Request con CI en verde.
@@ -191,4 +220,4 @@ PostgreSQL gratuita expira a los 30 días (con 14 días de gracia) y no incluye 
 
 ## Licencia y uso
 
-Proyecto académico (UTP, Integrador 2). Los datos de demanda y usuarios son de demostración; no representan información real de la empresa.
+Proyecto académico (UTP, Integrador 2). Usuarios, órdenes y existencias del sistema son de demostración. El histórico de grageado y el kardex de insumos son datos reales de la empresa (operarios anonimizados, sin datos personales de clientes).

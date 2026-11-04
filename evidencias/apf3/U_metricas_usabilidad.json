@@ -1,0 +1,58 @@
+{
+  "tarea1_cobertura_suero": {
+    "clics": 2,
+    "segundos": 0.62,
+    "objetivo_clics": 2
+  },
+  "tarea2_reporte_excel": {
+    "clics": 2,
+    "segundos": 0.11,
+    "archivo": "vastago_inventario.xlsx",
+    "objetivo_clics": 2
+  },
+  "vistas_navegables_un_clic": {
+    "total": 11,
+    "vistas": [
+      "Dashboard",
+      "Inventario",
+      "Producción",
+      "Producto terminado",
+      "Trazabilidad",
+      "Analítica IA",
+      "Asistente",
+      "Usuarios",
+      "Auditoría",
+      "Reportes",
+      "Correo y alertas"
+    ]
+  },
+  "mensaje_error_login": "Credenciales inválidas",
+  "mensaje_salida_mayor_al_stock": "Stock insuficiente",
+  "confirmacion_desactivar_usuario": "Desactivar a Jeaneli Caso Valenzuela? Se cerrarán sus sesiones.",
+  "sugerencias_iniciales_asistente": 6,
+  "respuesta_pregunta_no_entendida": "No entendí esa pregunta. Puedo responder sobre insumos (stock, cuánto alcanza, consumo, ingresos), qué está bajo el mínimo y la producción de grageado. Prueba con alguna de estas:\n\n¿Para cuánto alcanza el suero de leche?\n¿Qué insumos se acaban primero?\n¿Qué insumos están bajo el mínimo?\n¿Cuánto maní",
+  "elementos_indicadores_dashboard": 8,
+  "segundos_hasta_formulario_login": 0.19,
+  "login_movil_scroll_vs_ancho": [
+    375,
+    375
+  ],
+  "axe_violaciones_por_vista": {
+    "Dashboard": [],
+    "Inventario": [],
+    "Producción": [],
+    "Producto terminado": [],
+    "Trazabilidad": [],
+    "Analítica IA": [],
+    "Asistente": [],
+    "Usuarios": [],
+    "Auditoría": [],
+    "Reportes": [],
+    "Correo y alertas": []
+  },
+  "axe_graves_o_criticas": [],
+  "axe_violaciones_formularios_modales": {
+    "Inventario · movimiento y lotes": [],
+    "Usuarios · nuevo usuario": []
+  }
+}

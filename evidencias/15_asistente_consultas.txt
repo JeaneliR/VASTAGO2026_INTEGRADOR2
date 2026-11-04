@@ -1,0 +1,102 @@
+# Asistente de consultas — respuestas reales sobre el kardex (corte 6-oct-2026) y el control de producción
+# Cada respuesta se calcula en el sistema (SQL + aritmética); las pruebas test_asistente.py las contrastan con un cálculo independiente sobre los CSV.
+
+PREGUNTA: ¿Para cuánto alcanza el suero de leche?
+INTENCIÓN: cobertura
+RESPUESTA: Al ritmo registrado entre el 1 de septiembre de 2026 y el 6 de octubre de 2026, suero de leche (LAC-SDL-02) te alcanza unos 45 días, hasta aproximadamente el 20 de noviembre de 2026. Hay 265.55 kg y en 36 días salieron 209.45 kg (11 salidas; ≈ 5.82 kg por día). Con el ritmo de los últimos 14 días (2.96 kg por día) duraría unos 89 días. Llegaría al stock mínimo (50 kg) en unos 37 días (≈ 12 de noviembre de 2026); pide con la anticipación que tarde tu proveedor.
+  - Stock al corte: 265.55 kg
+  - Stock mínimo: 50 kg
+  - Consumo diario: 5.82 kg
+  - Días de cobertura: 45 (hasta 89 al ritmo reciente)
+  - Se agotaría hacia: 20 de noviembre de 2026
+  - Equivale a: ≈ 12 salidas de 21 kg
+NOTA: Estimación con el consumo registrado; si programas más producción, durará menos.
+
+PREGUNTA: ¿Cuánto maní tostado entero queda?
+INTENCIÓN: stock
+RESPUESTA: Maní tostado entero (NUC-MAE-02): 236 kg al 6 de octubre de 2026, sobre el mínimo (25 kg). Último ingreso registrado: 100 kg el 30 de septiembre de 2026. Al ritmo actual alcanza ≈ 38 días.
+  - Stock al corte: 236 kg
+  - Stock mínimo: 25 kg
+  - Último ingreso: 100 kg · 2026-09-30
+  - Días de cobertura: 38
+
+PREGUNTA: ¿Qué insumos se acaban primero?
+INTENCIÓN: ranking
+RESPUESTA: El insumo que se acabaría primero es polvo de cacao china nh: alcanza ≈ 1 día al ritmo registrado entre el 1 de septiembre de 2026 y el 6 de octubre de 2026. Abajo están los 8 más cercanos.
+  | Insumo | Stock (kg) | Consumo diario (kg) | Días que alcanza | Se agota hacia
+  | Polvo de cacao china nh | 44 | 30.03 | 1 | 2026-10-07
+  | Licor de cacao fino | 45 | 9.86 | 4 | 2026-10-10
+  | Manteca coberthel 1570h | 1,396 | 117.89 | 11 | 2026-10-17
+  | Azúcar blanca | 275.35 | 12.49 | 22 | 2026-10-28
+  | Maní tostado partido | 55 | 1.94 | 28 | 2026-11-03
+  | Azúcar rubia | 994 | 27.94 | 35 | 2026-11-10
+  | Maní tostado entero | 236 | 6.11 | 38 | 2026-11-13
+  | Almendras tostadas | 46 | 1.17 | 39 | 2026-11-14
+NOTA: Solo se listan insumos con consumo registrado; los que no tienen salidas no tienen ritmo con qué medir.
+
+PREGUNTA: ¿Qué debo comprar?
+INTENCIÓN: bajo_minimo
+RESPUESTA: Al 6 de octubre de 2026 hay 11 insumos por debajo de su stock mínimo, 8 de ellos sin existencias. Los más críticos aparecen primero.
+  - Bajo el mínimo: 11
+  - Sin existencias: 8
+  | Insumo | Stock (kg) | Mínimo (kg) | Falta para el mínimo (kg) | Consumo diario (kg)
+  | Cocoa negra - chocomani | 0 | 5 | 5 | sin consumo
+  | Licor de cacao molido | 0 | 20 | 20 | sin consumo
+  | Licor+ danifat | 0 | 100 | 100 | sin consumo
+  | Manteca de palma socolate | 0 | 160 | 160 | sin consumo
+  | Polvo de cacao alcalino | 0 | 10 | 10 | sin consumo
+  | Polvo de cacao natural (ayni food) | 0 | 150 | 150 | sin consumo
+  | Polvo de cacao negra turka | 0 | 25 | 25 | sin consumo
+  | Polvo de cacao nh vicente | 0 | 20 | 20 | sin consumo
+  | Licor de cacao fino | 45 | 150 | 105 | 9.86
+  | Galleta munición | 2.7 | 5.4 | 2.7 | sin consumo
+NOTA: 'Falta para el mínimo' es la cantidad para volver al mínimo, no una recomendación de compra.
+
+PREGUNTA: ¿Cuánto suero de leche consumimos en septiembre?
+INTENCIÓN: consumo
+RESPUESTA: En septiembre de 2026 salieron 172.8 kg de suero de leche (9 salidas).
+  - Salidas del mes: 172.8 kg
+
+PREGUNTA: ¿Cuándo fue el último ingreso de azúcar blanca?
+INTENCIÓN: ingreso
+RESPUESTA: El último ingreso de azúcar blanca fue de 250 kg el 1 de septiembre de 2026.
+  | Fecha | Cantidad
+  | 2026-09-01 | 250 kg
+  | 2026-08-21 | 1,050 kg
+
+PREGUNTA: ¿Cuánta leche queda?
+INTENCIÓN: stock
+RESPUESTA: Encontré varios insumos que coinciden: Cobertura de leche, Esencia de leche, Leche descremada, Suero de leche. ¿De cuál quieres saber? Escribe el nombre completo o su código.
+
+PREGUNTA: ¿Cuánto grageado produjimos en septiembre?
+INTENCIÓN: produccion
+RESPUESTA: En septiembre de 2026 se produjeron 2,977.9 kg de grageado en 28 tandas. Frente a agosto de 2026 (4,912 kg) es 39 % menos.
+  - Kg del mes: 2,977.9 kg
+  - Tandas: 28
+  | Centro | Tandas | Kg
+  | Maní | 12 | 1,513
+  | Pasas | 14 | 1,392.9
+  | Arroz extruido | 2 | 72
+NOTA: Fuente: control de producción real de grageado (operarios anonimizados).
+
+PREGUNTA: ¿Cuánto reproceso hubo en abril?
+INTENCIÓN: reproceso
+RESPUESTA: En abril de 2026 el reproceso fue de 166.06 kg (41.15 % de lo producido con reproceso anotado).
+  - Reproceso: 166.06 kg
+  - % sobre lo producido: 41.15 %
+
+PREGUNTA: ¿Cuánto vamos a producir el próximo mes?
+INTENCIÓN: pronostico
+RESPUESTA: Para octubre de 2026 el modelo estima ≈ 4,434 kg en la serie «Grageado total (todos los centros)». Úsalo como referencia, no como cifra exacta: el error de validación es alto (WAPE 59 %) porque la demanda real es irregular.
+  - Modelo: Estacional del año anterior ajustado
+  - Error (WAPE): 59.2 %
+  | Mes | Demanda estimada (kg)
+  | 2026-10 | 4,434
+  | 2026-11 | 4,897
+  | 2026-12 | 2,472
+NOTA: Pronóstico del módulo de analítica, calculado con el histórico real.
+
+PREGUNTA: ¿Qué clima hará mañana?
+INTENCIÓN: no_entendi
+RESPUESTA: No entendí esa pregunta. Puedo responder sobre insumos (stock, cuánto alcanza, consumo, ingresos), qué está bajo el mínimo y la producción de grageado. Prueba con alguna de estas:
+

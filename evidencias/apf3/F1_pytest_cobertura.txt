@@ -1,0 +1,44 @@
+........................................................................ [ 80%]
+.................                                                        [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                                Stmts   Miss  Cover
+-------------------------------------------------------
+app/__init__.py                        63     18    71%
+app/config.py                          32      5    84%
+app/datos_reales.py                    39      0   100%
+app/db.py                              19      0   100%
+app/demo_data.py                       91     11    88%
+app/extensions.py                       3      0   100%
+app/migrate.py                         16      1    94%
+app/repositories/__init__.py            0      0   100%
+app/repositories/analitica.py          57      2    96%
+app/repositories/asistente.py          28      2    93%
+app/repositories/base.py               25      4    84%
+app/repositories/correo.py             19      1    95%
+app/repositories/inventario.py         37      0   100%
+app/repositories/planta.py             73      1    99%
+app/repositories/produccion.py         30      2    93%
+app/repositories/reportes.py            6      0   100%
+app/repositories/usuarios.py           37      1    97%
+app/routes/__init__.py                  0      0   100%
+app/routes/asistente.py                23      1    96%
+app/routes/auth.py                    178     18    90%
+app/routes/correo.py                   50     16    68%
+app/routes/negocio.py                  96      5    95%
+app/routes/panel.py                    46      5    89%
+app/routes/planta.py                  173      7    96%
+app/routes/reportes.py                107      9    92%
+app/security.py                        84      4    95%
+app/seed.py                            72      6    92%
+app/services/__init__.py                0      0   100%
+app/services/asistente_service.py     313     14    96%
+app/services/auth_service.py           57      1    98%
+app/services/correo_service.py         86     13    85%
+app/services/planta_service.py        153     18    88%
+-------------------------------------------------------
+TOTAL                                2013    165    92%
+Coverage HTML written to dir ../evidencias/apf3/F1_cobertura_html
+Coverage XML written to file ../evidencias/apf3/F1_cobertura.xml
+89 passed in 9.72s

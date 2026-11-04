@@ -21,13 +21,14 @@ def create_app(overrides=None):
     if app.config.get("ENABLE_COMPRESSION", True):
         Compress(app)                                       # gzip/brotli: estrategia WPO
 
-    from app.routes import auth, negocio, planta, panel, reportes, correo
+    from app.routes import asistente, auth, correo, negocio, panel, planta, reportes
     app.register_blueprint(auth.bp)
     app.register_blueprint(negocio.bp)
     app.register_blueprint(planta.bp)
     app.register_blueprint(panel.bp)
     app.register_blueprint(reportes.bp)
     app.register_blueprint(correo.bp)
+    app.register_blueprint(asistente.bp)
     app.after_request(aplicar_cabeceras)
 
     @app.errorhandler(404)

@@ -4,7 +4,7 @@
 -- Ejecutar: psql -d vastago -f db/schema.sql
 -- ============================================================================
 
-DROP TABLE IF EXISTS auditoria, sesiones, pronosticos, demanda_historica, alertas,
+DROP TABLE IF EXISTS auditoria, sesiones, kardex_movimientos, kardex_insumos, pronosticos, demanda_historica, series_demanda, produccion_historica, alertas,
     movimientos_pt, lotes_pt, etapa_consumos, orden_etapas, ruta_etapas, equipos, lotes_insumo,
     movimientos_inventario, ordenes_produccion, bom, productos, insumos, usuarios, roles CASCADE;
 DROP VIEW IF EXISTS v_stock_pt CASCADE;
@@ -217,21 +217,68 @@ CREATE TABLE alertas (
     creada_en  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Series de demanda a pronosticar (p. ej. kg mensuales de grageado con maní). No dependen del catálogo de productos.
+CREATE TABLE series_demanda (
+    id     SERIAL PRIMARY KEY,
+    nombre VARCHAR(80) NOT NULL UNIQUE,
+    unidad VARCHAR(10) NOT NULL DEFAULT 'kg'
+);
+
 CREATE TABLE demanda_historica (
-    producto_id INT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
-    mes         DATE NOT NULL,
-    kg          NUMERIC(10,2) NOT NULL,
-    PRIMARY KEY (producto_id, mes)
+    serie_id INT NOT NULL REFERENCES series_demanda(id) ON DELETE CASCADE,
+    mes      DATE NOT NULL,
+    kg       NUMERIC(10,2) NOT NULL,
+    imputado BOOLEAN NOT NULL DEFAULT FALSE,      -- mes sin registro completo en el control de planta (valor interpolado)
+    PRIMARY KEY (serie_id, mes)
 );
 
 CREATE TABLE pronosticos (
-    producto_id INT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
-    mes         DATE NOT NULL,
-    kg          NUMERIC(10,2) NOT NULL,
-    mape        NUMERIC(5,2) NOT NULL,
-    modelo      VARCHAR(60) NOT NULL DEFAULT 'Regresion lineal + estacionalidad',
-    PRIMARY KEY (producto_id, mes)
+    serie_id INT NOT NULL REFERENCES series_demanda(id) ON DELETE CASCADE,
+    mes      DATE NOT NULL,
+    kg       NUMERIC(10,2) NOT NULL,
+    mape     NUMERIC(6,2) NOT NULL,               -- error porcentual medio absoluto (validación de origen móvil)
+    wape     NUMERIC(6,2) NOT NULL,               -- error porcentual ponderado por volumen (más estable con meses bajos)
+    modelo   VARCHAR(60) NOT NULL,
+    PRIMARY KEY (serie_id, mes)
 );
+
+-- Control de producción de grageado de los archivos reales de planta (2025-2026), con operarios anonimizados
+CREATE TABLE produccion_historica (
+    id           SERIAL PRIMARY KEY,
+    mes          DATE NOT NULL,                   -- primer día del mes al que se asigna la tanda
+    fecha        DATE,                            -- fecha de ingreso (algunas tandas no la registran)
+    operador     VARCHAR(30) NOT NULL,
+    centro       VARCHAR(30) NOT NULL,
+    variante     VARCHAR(20) NOT NULL DEFAULT 'Estándar',
+    centro_kg    NUMERIC(10,3) CHECK (centro_kg >= 0),
+    chocolate_kg NUMERIC(10,3) CHECK (chocolate_kg >= 0),
+    bruto_kg     NUMERIC(10,3) NOT NULL CHECK (bruto_kg > 0),
+    reproceso_kg NUMERIC(10,3) CHECK (reproceso_kg >= 0),
+    lote         VARCHAR(20)
+);
+CREATE INDEX ix_prod_hist_mes ON produccion_historica(mes, centro);
+
+-- Kardex real de insumos (archivos de planta, may-oct 2026). Sirve de base al asistente de consultas.
+-- fuente 'kardex_sep' = septiembre en adelante: saldo inicial + ingresos - salidas = stock actual (cuadra al 100 %).
+-- fuente 'kardex_may_ago' = histórico parcial (puede omitir salidas): solo para consumos mensuales aproximados.
+CREATE TABLE kardex_insumos (
+    codigo       VARCHAR(20) PRIMARY KEY,         -- FAMILIA-SUBTIPO-correlativo, p. ej. LAC-SDL-02
+    nombre       VARCHAR(80) NOT NULL,
+    familia      VARCHAR(40) NOT NULL,
+    unidad       VARCHAR(10) NOT NULL DEFAULT 'kg',
+    stock_minimo NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (stock_minimo >= 0),
+    stock_actual NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (stock_actual >= 0)
+);
+
+CREATE TABLE kardex_movimientos (
+    id          SERIAL PRIMARY KEY,
+    codigo      VARCHAR(20) NOT NULL REFERENCES kardex_insumos(codigo),
+    fecha       DATE NOT NULL,
+    tipo        VARCHAR(14) NOT NULL CHECK (tipo IN ('saldo_inicial','ingreso','salida')),
+    cantidad_kg NUMERIC(10,3) NOT NULL CHECK (cantidad_kg > 0),
+    fuente      VARCHAR(20) NOT NULL CHECK (fuente IN ('kardex_sep','kardex_may_ago'))
+);
+CREATE INDEX ix_kardex_mov ON kardex_movimientos(codigo, fecha);
 
 -- ---------------------------------------------------------------- Trazabilidad
 CREATE TABLE auditoria (

@@ -21,17 +21,33 @@ function Chart({ data, producto }) {
   return <canvas ref={ref} style={{ width: "100%" }} role="img" aria-label={"Demanda histórica y proyectada de " + producto} />;
 }
 
+const kg = (v) => (v == null ? "—" : Number(v).toLocaleString("es-PE", { maximumFractionDigits: 0 }));
+
+function Historico({ h }) {
+  const ult = h.meses.slice(-12).reverse();
+  return (<>
+    <h3 style={{ marginTop: 28 }}>Producción real de grageado (control de planta 2025–2026)</h3>
+    <p className="muted">Cada fila resume las tandas registradas en los archivos de control de producción. El reproceso solo se registra desde octubre de 2025.</p>
+    <table><thead><tr><th>Centro</th><th>Tandas</th><th>Kg producidos</th><th>Kg por tanda</th><th>% centro en la tanda</th></tr></thead>
+      <tbody>{h.centros.map((c) => <tr key={c.centro}><td>{c.centro}</td><td>{c.tandas}</td><td>{kg(c.kg)}</td><td>{kg(c.kg_por_tanda)}</td><td>{c.pct_centro == null ? "—" : c.pct_centro + " %"}</td></tr>)}</tbody></table>
+    <table style={{ marginTop: 16 }}><thead><tr><th>Mes</th><th>Tandas</th><th>Total kg</th><th>Maní</th><th>Pasas</th><th>Otros centros</th><th>Reproceso</th></tr></thead>
+      <tbody>{ult.map((m) => <tr key={m.mes}><td>{m.mes}</td><td>{m.tandas}</td><td>{kg(m.kg)}</td><td>{kg(m.kg_mani)}</td><td>{kg(m.kg_pasas)}</td><td>{kg(m.kg_otros)}</td>
+        <td>{m.reproceso_kg == null ? "—" : `${m.reproceso_kg} kg (${((m.reproceso_kg / m.kg_con_reproceso) * 100).toFixed(2)} %)`}</td></tr>)}</tbody></table>
+  </>);
+}
+
 export default function Analitica() {
-  const [d, setD] = useState(null), [p, setP] = useState(""), [err, setErr] = useState("");
-  useEffect(() => { api.forecast().then((x) => { setD(x); setP(Object.keys(x.series)[0]); }).catch((e) => setErr(e.message)); }, []);
+  const [d, setD] = useState(null), [p, setP] = useState(""), [err, setErr] = useState(""), [h, setH] = useState(null);
+  useEffect(() => { api.forecast().then((x) => { setD(x); setP(Object.keys(x.series)[0]); }).catch((e) => setErr(e.message)); api.historico().then(setH).catch(() => {}); }, []);
   if (err) return <p className="err">{err}</p>;
   if (!d) return <p>Cargando…</p>;
   const s = d.series[p];
   return (<div className="panel">
-    <div className="field" style={{ maxWidth: 360 }}><label>Producto</label><select value={p} onChange={(e) => setP(e.target.value)}>{Object.keys(d.series).map((k) => <option key={k}>{k}</option>)}</select></div>
+    <div className="field" style={{ maxWidth: 360 }}><label htmlFor="serie-demanda">Serie de demanda</label><select id="serie-demanda" value={p} onChange={(e) => setP(e.target.value)}>{Object.keys(d.series).map((k) => <option key={k}>{k}</option>)}</select></div>
     <Chart data={d} producto={p} />
-    <p>Error de validación del modelo (MAPE): <strong>{s.mape}%</strong></p>
+    <p>Modelo elegido: <strong>{s.modelo}</strong>. Error de validación: <strong>WAPE {s.wape}%</strong> (MAPE {s.mape}%). Los meses sin registro completo ({(d.meses_sin_registro || []).join(", ") || "ninguno"}) se interpolaron.</p>
     <table><thead><tr><th>Mes proyectado</th><th>Demanda estimada</th><th>Margen de error</th></tr></thead>
-      <tbody>{s.meses_forecast.map((m, i) => <tr key={m}><td>{m}</td><td>{s.forecast[i].toLocaleString("es-PE")} kg</td><td>±{Math.round(s.forecast[i] * (s.mape / 100))} kg</td></tr>)}</tbody></table>
+      <tbody>{s.meses_forecast.map((m, i) => <tr key={m}><td>{m}</td><td>{s.forecast[i].toLocaleString("es-PE")} kg</td><td>±{Math.round(s.forecast[i] * (s.wape / 100))} kg</td></tr>)}</tbody></table>
+    {h && <Historico h={h} />}
   </div>);
 }

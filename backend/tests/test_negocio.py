@@ -77,6 +77,36 @@ def test_kpis_y_alertas(client, tokens):
 
 def test_forecast_estructura(client, tokens):
     f = client.get("/api/forecast", headers=tokens["gerente"]).get_json()
-    assert len(f["meses_hist"]) == 24 and len(f["series"]) == 3
-    s = f["series"]["Bombones Caja x6"]
-    assert len(s["historico"]) == 24 and len(s["forecast"]) == 3 and s["mape"] == 4.5
+    assert len(f["meses_hist"]) == 21 and len(f["series"]) == 3
+    assert f["meses_sin_registro"] == ["2025-04", "2026-02"]          # meses interpolados por falta de registro
+    s = f["series"]["Gragea con maní"]
+    assert len(s["historico"]) == 21 and len(s["forecast"]) == 3
+    assert s["modelo"] and 0 < s["wape"] < 150 and s["mape"] > 0
+
+
+def test_historico_real_cuadra_con_el_csv_y_respeta_roles(client, tokens):
+    import csv, os
+    ruta = os.path.join(os.path.dirname(__file__), "..", "..", "db", "historico_grageado.csv")
+    filas = list(csv.DictReader(open(ruta, encoding="utf-8")))
+    h = client.get("/api/analitica/historico", headers=tokens["gerente"]).get_json()
+    assert sum(m["tandas"] for m in h["meses"]) == len(filas)
+    assert round(sum(m["kg"] for m in h["meses"])) == round(sum(float(f["bruto_kg"]) for f in filas))
+    assert {c["centro"] for c in h["centros"]} >= {"Maní", "Pasas"}
+    assert all(f["operador"].startswith("Operario") or f["operador"] == "Sin registrar" for f in filas)   # sin nombres de personas
+    assert client.get("/api/analitica/historico", headers=tokens["almacen"]).status_code == 403
+
+
+def test_kpi_de_precision_muestra_el_error_real_del_pronostico(client, tokens):
+    k = client.get("/api/kpis", headers=tokens["gerente"]).get_json()
+    assert k["precisionModelo"]["delta"].startswith("Error del pronóstico") and k["precisionModelo"]["valor"].endswith("%")
+    assert float(k["precisionModelo"]["valor"].rstrip("%")) > 20      # con datos reales el error es alto: no se presenta como "precisión"
+
+
+def test_movimiento_con_cantidad_fuera_de_rango_explica_el_error(client, tokens):
+    """Usabilidad (ISO 25010, protección frente a errores): el mensaje indica cómo corregir la cantidad."""
+    item = client.get("/api/inventario", headers=tokens["admin"]).get_json()[0]
+    for cantidad in (0, -3, 99999999):
+        r = client.post(f"/api/inventario/{item['id']}/movimientos", headers=tokens["admin"], json={"tipo": "SALIDA", "cantidad": cantidad})
+        assert r.status_code == 400 and "cantidad mayor que 0" in r.get_json()["error"]
+    r = client.post(f"/api/inventario/{item['id']}/movimientos", headers=tokens["admin"], json={"tipo": "SALIDA", "cantidad": 999999})
+    assert r.status_code == 409 and r.get_json()["error"] == "Stock insuficiente"

@@ -6,7 +6,7 @@ from app.repositories.inventario import InsumoRepository, LoteInsumoRepository, 
 from app.repositories.produccion import OrdenRepository
 from app.services import planta_service
 from app.services.planta_service import ReglaNegocio
-from app.repositories.analitica import AlertaRepository, PronosticoRepository, AuditoriaRepository
+from app.repositories.analitica import AlertaRepository, HistoricoRepository, PronosticoRepository, AuditoriaRepository
 
 bp = Blueprint("negocio", __name__, url_prefix="/api")
 
@@ -37,8 +37,10 @@ def movimiento(insumo_id):
     """Ingreso (con lote de proveedor y vencimiento) o salida manual (del lote indicado o por FEFO)."""
     d = request.get_json(silent=True) or {}
     tipo, cantidad = d.get("tipo", "INGRESO"), _num(d.get("cantidad"), 1_000_000)
-    if tipo not in ("INGRESO", "SALIDA") or cantidad is None:
+    if tipo not in ("INGRESO", "SALIDA"):
         return jsonify(error="Datos inválidos"), 400
+    if cantidad is None:
+        return jsonify(error="Ingresa una cantidad mayor que 0 y no superior a 1 000 000"), 400
     codigo = str(d.get("lote", "") or "")[:30].strip()
     proveedor = str(d.get("proveedor", "") or "")[:100].strip() or None
     vencimiento = str(d.get("vencimiento", "") or "")[:10] or None
@@ -100,7 +102,7 @@ def alertas():
 def kpis():
     q = InsumoRepository().contar_quiebres()
     o = OrdenRepository().contar_activas()
-    mape = round(PronosticoRepository().mape_promedio(), 1)
+    wape = round(PronosticoRepository().wape_promedio(), 1)
     from app.routes.panel import periodo
     from app.repositories.analitica import DashboardRepository
     _, start, end = periodo()
@@ -110,10 +112,18 @@ def kpis():
                    mermaMes={"valor": f"{ratio:g}%" if ratio is not None else "Sin datos", "delta": "Merma / consumo en kg de etapas cerradas este mes", "tipo": "neutral"},
                    ordenesActivas={"valor": str(o["en_proceso"] + o["planificadas"]),
                                    "delta": f"{o['en_proceso']} en proceso, {o['planificadas']} planificadas", "tipo": "neutral"},
-                   precisionModelo={"valor": f"{round(100 - mape, 1)}%", "delta": f"MAPE promedio {mape}%", "tipo": "up"})
+                   precisionModelo={"valor": f"{wape}%", "delta": "Error del pronóstico (WAPE, validación)", "tipo": "neutral"})
 
 
 @bp.get("/forecast")
 @login_required("analitica:ver")
 def forecast():
     return jsonify(PronosticoRepository().serie())
+
+
+@bp.get("/analitica/historico")
+@login_required("analitica:ver")
+def historico():
+    """Producción real de grageado: kg por mes y centro, rendimiento por tanda y reproceso."""
+    repo = HistoricoRepository()
+    return jsonify(meses=repo.mensual(), centros=repo.por_centro())

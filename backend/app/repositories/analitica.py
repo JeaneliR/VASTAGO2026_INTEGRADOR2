@@ -80,24 +80,57 @@ class PronosticoRepository(BaseRepository):
     tabla = "pronosticos"
 
     def serie(self):
-        hist = self._run("SELECT p.nombre, to_char(d.mes,'YYYY-MM') AS mes, d.kg::float AS kg FROM demanda_historica d "
-                         "JOIN productos p ON p.id = d.producto_id ORDER BY p.nombre, d.mes")
-        fut = self._run("SELECT p.nombre, to_char(f.mes,'YYYY-MM') AS mes, f.kg::float AS kg, f.mape::float AS mape "
-                        "FROM pronosticos f JOIN productos p ON p.id = f.producto_id ORDER BY p.nombre, f.mes")
-        out = {"meses_hist": [], "series": {}}
+        hist = self._run("SELECT s.nombre, to_char(d.mes,'YYYY-MM') AS mes, d.kg::float AS kg, d.imputado FROM demanda_historica d "
+                         "JOIN series_demanda s ON s.id = d.serie_id ORDER BY s.nombre, d.mes")
+        fut = self._run("SELECT s.nombre, to_char(f.mes,'YYYY-MM') AS mes, f.kg::float AS kg, f.mape::float AS mape, f.wape::float AS wape, f.modelo "
+                        "FROM pronosticos f JOIN series_demanda s ON s.id = f.serie_id ORDER BY s.nombre, f.mes")
+        out = {"meses_hist": [], "meses_sin_registro": [], "series": {}}
         for r in hist:
-            s = out["series"].setdefault(r["nombre"], {"historico": [], "meses_forecast": [], "forecast": [], "mape": None})
+            s = out["series"].setdefault(r["nombre"], {"historico": [], "meses_forecast": [], "forecast": [], "mape": None, "wape": None, "modelo": None})
             s["historico"].append(r["kg"])
             if r["mes"] not in out["meses_hist"]:
                 out["meses_hist"].append(r["mes"])
+            if r["imputado"] and r["mes"] not in out["meses_sin_registro"]:
+                out["meses_sin_registro"].append(r["mes"])
         for r in fut:
             s = out["series"][r["nombre"]]
-            s["meses_forecast"].append(r["mes"]); s["forecast"].append(r["kg"]); s["mape"] = r["mape"]
+            s["meses_forecast"].append(r["mes"]); s["forecast"].append(r["kg"])
+            s["mape"], s["wape"], s["modelo"] = r["mape"], r["wape"], r["modelo"]
         return out
 
     def mape_promedio(self):
-        r = self._run("SELECT COALESCE(avg(m),0)::float AS v FROM (SELECT DISTINCT producto_id, mape AS m FROM pronosticos) t", one=True)
+        r = self._run("SELECT COALESCE(avg(m),0)::float AS v FROM (SELECT DISTINCT serie_id, mape AS m FROM pronosticos) t", one=True)
         return r["v"]
+
+    def wape_promedio(self):
+        r = self._run("SELECT COALESCE(avg(w),0)::float AS v FROM (SELECT DISTINCT serie_id, wape AS w FROM pronosticos) t", one=True)
+        return r["v"]
+
+
+class HistoricoRepository(BaseRepository):
+    """Control de producción real de grageado (tandas de los archivos de planta, operarios anonimizados)."""
+    tabla = "produccion_historica"
+
+    def mensual(self):
+        return self._run("SELECT to_char(mes,'YYYY-MM') AS mes, count(*)::int AS tandas, round(sum(bruto_kg),1)::float AS kg, "
+                         "round(sum(bruto_kg) FILTER (WHERE centro='Maní'),1)::float AS kg_mani, "
+                         "round(sum(bruto_kg) FILTER (WHERE centro='Pasas'),1)::float AS kg_pasas, "
+                         "round(sum(bruto_kg) FILTER (WHERE centro NOT IN ('Maní','Pasas')),1)::float AS kg_otros, "
+                         "round(sum(reproceso_kg),2)::float AS reproceso_kg, "
+                         "round(sum(bruto_kg) FILTER (WHERE reproceso_kg IS NOT NULL),1)::float AS kg_con_reproceso "
+                         "FROM produccion_historica GROUP BY mes ORDER BY mes")
+
+    def por_centro(self):
+        return self._run("SELECT centro, count(*)::int AS tandas, round(sum(bruto_kg),1)::float AS kg, "
+                         "round(avg(bruto_kg),1)::float AS kg_por_tanda, "
+                         "round((sum(centro_kg) FILTER (WHERE centro_kg IS NOT NULL) / NULLIF(sum(bruto_kg) FILTER (WHERE centro_kg IS NOT NULL),0) * 100)::numeric,1)::float AS pct_centro "
+                         "FROM produccion_historica GROUP BY centro ORDER BY sum(bruto_kg) DESC")
+
+    def reproceso_reciente(self):
+        """Reproceso (kg y %) de los dos últimos meses que registran reproceso."""
+        return self._run("SELECT to_char(mes,'YYYY-MM') AS mes, round(sum(reproceso_kg),2)::float AS reproceso_kg, "
+                         "round((sum(reproceso_kg) / sum(bruto_kg) * 100)::numeric,2)::float AS pct, count(*)::int AS tandas "
+                         "FROM produccion_historica WHERE reproceso_kg IS NOT NULL GROUP BY mes ORDER BY mes DESC LIMIT 2")
 
 
 class AuditoriaRepository(BaseRepository):
