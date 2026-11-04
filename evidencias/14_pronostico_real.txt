@@ -1,0 +1,25 @@
+PRONÓSTICO CON DATOS REALES DE GRAGEADO (kg/mes)
+Historia: 2025-01 a 2026-09 (21 meses); meses interpolados por falta de registro: 2025-04, 2026-02
+Validación: origen móvil, entrenando con los meses previos y pronosticando 3 meses; se elige el modelo de menor WAPE.
+
+Gragea con maní
+   Media móvil 3 meses                      MAPE   94.6 %   WAPE  66.6 %  (7 orígenes)
+   Tendencia lineal                         MAPE  126.5 %   WAPE  73.2 %  (7 orígenes)
+   Suavizado de Holt                        MAPE  100.5 %   WAPE  76.1 %  (7 orígenes)
+   Estacional del año anterior ajustado     MAPE   90.3 %   WAPE  58.3 %  (7 orígenes)   <-- elegido
+   Pronóstico 2026-10..2026-12: [1752, 2050, 1344] kg
+
+Gragea con pasas
+   Media móvil 3 meses                      MAPE   65.8 %   WAPE  81.3 %  (7 orígenes)
+   Tendencia lineal                         MAPE   96.5 %   WAPE  91.9 %  (7 orígenes)
+   Suavizado de Holt                        MAPE   80.2 %   WAPE  96.2 %  (7 orígenes)
+   Estacional del año anterior ajustado     MAPE   66.0 %   WAPE  74.0 %  (7 orígenes)   <-- elegido
+   Pronóstico 2026-10..2026-12: [2038, 2699, 509] kg
+
+Grageado total (todos los centros)
+   Media móvil 3 meses                      MAPE   94.4 %   WAPE  71.3 %  (7 orígenes)
+   Tendencia lineal                         MAPE  138.6 %   WAPE  86.1 %  (7 orígenes)
+   Suavizado de Holt                        MAPE  105.2 %   WAPE  84.2 %  (7 orígenes)
+   Estacional del año anterior ajustado     MAPE   86.7 %   WAPE  59.2 %  (7 orígenes)   <-- elegido
+   Pronóstico 2026-10..2026-12: [4434, 4897, 2472] kg
+

@@ -1,0 +1,22 @@
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python
+rootdir: /tmp/claude-0/-home-claude/a90e853e-30fe-5c9d-9205-7c4a145166c6/scratchpad/merge/backend
+plugins: anyio-4.15.1, cov-7.1.0
+collecting ... collected 14 items
+
+tests/test_integracion_resend.py::test_int01_envio_exitoso_respeta_el_contrato_http_de_resend PASSED [  7%]
+tests/test_integracion_resend.py::test_int02_resend_responde_201_tambien_se_acepta PASSED [ 14%]
+tests/test_integracion_resend.py::test_int03_errores_del_proveedor_se_muestran_como_fallido_con_mensaje_claro[401-clave de Resend no es v\xe1lida] PASSED [ 21%]
+tests/test_integracion_resend.py::test_int03_errores_del_proveedor_se_muestran_como_fallido_con_mensaje_claro[403-no autoriza] PASSED [ 28%]
+tests/test_integracion_resend.py::test_int03_errores_del_proveedor_se_muestran_como_fallido_con_mensaje_claro[422-rechaz\xf3 los datos] PASSED [ 35%]
+tests/test_integracion_resend.py::test_int03_errores_del_proveedor_se_muestran_como_fallido_con_mensaje_claro[429-l\xedmite de env\xedos] PASSED [ 42%]
+tests/test_integracion_resend.py::test_int03_errores_del_proveedor_se_muestran_como_fallido_con_mensaje_claro[500-HTTP 500] PASSED [ 50%]
+tests/test_integracion_resend.py::test_int04_respuesta_sin_identificador_no_se_acepta PASSED [ 57%]
+tests/test_integracion_resend.py::test_int05_timeout_del_proveedor_queda_fallido_y_reintentable PASSED [ 64%]
+tests/test_integracion_resend.py::test_int06_reintento_reutiliza_la_misma_clave_de_idempotencia PASSED [ 71%]
+tests/test_integracion_resend.py::test_int07_no_se_siguen_redirecciones_del_proveedor PASSED [ 78%]
+tests/test_integracion_resend.py::test_int08_sin_clave_configurada_el_sistema_no_intenta_enviar PASSED [ 85%]
+tests/test_integracion_resend.py::test_int09_auditoria_registra_aceptado_y_fallido_sin_secretos PASSED [ 92%]
+tests/test_integracion_resend.py::test_int10_solo_roles_autorizados_disparan_la_integracion PASSED [100%]
+
+- generated xml file: /tmp/claude-0/-home-claude/a90e853e-30fe-5c9d-9205-7c4a145166c6/scratchpad/merge/evidencias/apf3/I2_junit_resend.xml -
+============================== 14 passed in 2.79s ==============================

@@ -1,5 +1,5 @@
 """Crea el esquema y carga datos de demostración.   Uso:  python -m app.seed"""
-import json, os, sys
+import os, sys
 from datetime import date, datetime, timedelta, timezone
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -131,13 +131,6 @@ def main(if_empty=False):
         cur.execute("SELECT id FROM usuarios WHERE email='jefe.produccion@vastagoyco.pe'")
         jefe = cur.fetchone()[0]
         _historial_planta(conn, jefe)
-        fc = json.load(open(os.path.join(ROOT, "ml-service", "forecast_output.json"), encoding="utf-8"))
-        for prod, s in fc["series"].items():
-            cur.execute("SELECT id FROM productos WHERE nombre=%s", (prod,)); pid = cur.fetchone()[0]
-            for mes, kg in zip(fc["meses_hist"], s["historico"]):
-                cur.execute("INSERT INTO demanda_historica VALUES (%s,%s,%s)", (pid, mes + "-01", kg))
-            for mes, kg in zip(s["meses_forecast"], s["forecast"]):
-                cur.execute("INSERT INTO pronosticos (producto_id,mes,kg,mape) VALUES (%s,%s,%s,%s)", (pid, mes + "-01", kg, s["mape"]))
         conn.commit(); conn.close()
     print("Base de datos inicializada. Usuarios demo (la contraseña es la de la variable DEMO_PASSWORD):")
     for _, e, r, _ in usuarios:

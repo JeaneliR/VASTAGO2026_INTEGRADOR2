@@ -1,0 +1,22 @@
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python
+rootdir: /tmp/claude-0/-home-claude/a90e853e-30fe-5c9d-9205-7c4a145166c6/scratchpad/merge
+plugins: anyio-4.15.1, cov-7.1.0
+collecting ... collected 14 items
+
+pruebas/integracion/test_api_rest.py::test_ir01_health_publico PASSED    [  7%]
+pruebas/integracion/test_api_rest.py::test_ir02_login_correcto_devuelve_token_y_permisos PASSED [ 14%]
+pruebas/integracion/test_api_rest.py::test_ir03_login_incorrecto_no_revela_si_el_usuario_existe PASSED [ 21%]
+pruebas/integracion/test_api_rest.py::test_ir04_rutas_protegidas_exigen_token PASSED [ 28%]
+pruebas/integracion/test_api_rest.py::test_ir05_contrato_json_de_inventario PASSED [ 35%]
+pruebas/integracion/test_api_rest.py::test_ir06_rbac_operario_no_accede_a_correo_ni_usuarios PASSED [ 42%]
+pruebas/integracion/test_api_rest.py::test_ir07_admin_ve_estado_del_proveedor_de_correo_sin_exponer_la_clave PASSED [ 50%]
+pruebas/integracion/test_api_rest.py::test_ir08_exportacion_excel_es_un_xlsx_valido PASSED [ 57%]
+pruebas/integracion/test_api_rest.py::test_ir09_exportacion_pdf_tiene_cabecera_pdf PASSED [ 64%]
+pruebas/integracion/test_api_rest.py::test_ir10_asistente_responde_con_datos_del_kardex PASSED [ 71%]
+pruebas/integracion/test_api_rest.py::test_ir11_entradas_maliciosas_se_rechazan_sin_error_500 PASSED [ 78%]
+pruebas/integracion/test_api_rest.py::test_ir12_cabeceras_de_seguridad_presentes PASSED [ 85%]
+pruebas/integracion/test_api_rest.py::test_ir13_tiempo_de_respuesta_de_endpoints_clave PASSED [ 92%]
+pruebas/integracion/test_api_rest.py::test_ir14_metodo_no_permitido_y_ruta_inexistente PASSED [100%]
+
+- generated xml file: /tmp/claude-0/-home-claude/a90e853e-30fe-5c9d-9205-7c4a145166c6/scratchpad/merge/evidencias/apf3/I1_junit_api_rest.xml -
+============================== 14 passed in 2.42s ==============================

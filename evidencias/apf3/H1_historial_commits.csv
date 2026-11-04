@@ -1,0 +1,10 @@
+commit,fecha_hora,autor,ramas_etiquetas,mensaje
+e1b1809,2026-11-03 21:20:08 (UTC-5),WheiekLD,"HEAD -> main, origin/main, origin/HEAD",APF3 evidencias de pruebas
+16dbb52,2026-11-03 17:24:41 (UTC-5),WheiekLD,,Sprint 4: actualiza despliegue y README de la v2
+7444b20,2026-11-03 01:52:53 (UTC-5),WheiekLD,,"Sprint 4: dashboard, gestión de usuarios, reportes y alertas por correo"
+54dcc78,2026-10-07 02:52:22 (UTC-5),JeaneliR,,Merge pull request #1 from JeaneliR/feature/planta-pt-trazabilidad
+8fe392f,2026-10-07 02:49:20 (UTC-5),JeaneliR,origin/feature/planta-pt-trazabilidad,"feat: inventario de PT, rutas de proceso y trazabilidad por lote"
+be9ffdd,2026-10-06 21:50:58 (UTC-5),WheiekLD,origin/develop,evidencias del render
+265bebf,2026-10-06 17:50:32 (UTC-5),WheiekLD,,actualizacion del proyecto
+9c8f383,2026-10-05 16:07:40 (UTC-5),WheiekLD,,"primer avance, sin bd"
+f8d8419,2026-09-08 22:25:20 (UTC-5),WheiekLD,,Initial commit

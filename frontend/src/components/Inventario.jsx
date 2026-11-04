@@ -36,15 +36,15 @@ export default function Inventario({ permisos, irA }) {
           <tbody>{lotes.map((l) => <tr key={l.id}><td><button type="button" className="link" onClick={() => irA && irA("trazabilidad", l.codigo)}>{l.codigo}</button></td><td>{l.proveedor || "—"}</td><td>{fecha(l.ingreso)}</td><td>{l.vencimiento ? fecha(l.vencimiento) : "—"}</td><td>{num(l.disponible)} {sel.unidad}</td></tr>)}</tbody></table>
         {puede && (<>
           <div className="grid2">
-            <div className="field"><label>Tipo</label><select value={f.tipo} onChange={(e) => setF({ ...f, tipo: e.target.value })}><option value="INGRESO">Ingreso (nuevo lote)</option><option value="SALIDA">Salida manual (FEFO)</option></select></div>
-            <div className="field"><label>Cantidad ({sel.unidad})</label><input type="number" min="0.001" step="any" required value={f.cantidad} onChange={(e) => setF({ ...f, cantidad: e.target.value })} /></div>
+            <div className="field"><label htmlFor="mov-tipo">Tipo</label><select id="mov-tipo" value={f.tipo} onChange={(e) => setF({ ...f, tipo: e.target.value })}><option value="INGRESO">Ingreso (nuevo lote)</option><option value="SALIDA">Salida manual (FEFO)</option></select></div>
+            <div className="field"><label htmlFor="mov-cantidad">Cantidad ({sel.unidad})</label><input id="mov-cantidad" type="number" min="0.001" step="any" required value={f.cantidad} onChange={(e) => setF({ ...f, cantidad: e.target.value })} /></div>
           </div>
           {f.tipo === "INGRESO" && (<div className="grid2">
-            <div className="field"><label>Código de lote (vacío = automático)</label><input maxLength={30} value={f.lote} onChange={(e) => setF({ ...f, lote: e.target.value })} /></div>
-            <div className="field"><label>Vencimiento</label><input type="date" value={f.vencimiento} onChange={(e) => setF({ ...f, vencimiento: e.target.value })} /></div>
-            <div className="field"><label>Proveedor</label><input maxLength={100} value={f.proveedor} onChange={(e) => setF({ ...f, proveedor: e.target.value })} /></div>
+            <div className="field"><label htmlFor="mov-lote">Código de lote (vacío = automático)</label><input id="mov-lote" maxLength={30} value={f.lote} onChange={(e) => setF({ ...f, lote: e.target.value })} /></div>
+            <div className="field"><label htmlFor="mov-vence">Vencimiento</label><input id="mov-vence" type="date" value={f.vencimiento} onChange={(e) => setF({ ...f, vencimiento: e.target.value })} /></div>
+            <div className="field"><label htmlFor="mov-proveedor">Proveedor</label><input id="mov-proveedor" maxLength={100} value={f.proveedor} onChange={(e) => setF({ ...f, proveedor: e.target.value })} /></div>
           </div>)}
-          <div className="field"><label>Motivo</label><input maxLength={120} value={f.motivo} onChange={(e) => setF({ ...f, motivo: e.target.value })} /></div>
+          <div className="field"><label htmlFor="mov-motivo">Motivo</label><input id="mov-motivo" maxLength={120} value={f.motivo} onChange={(e) => setF({ ...f, motivo: e.target.value })} /></div>
           {err && <p className="err">{err}</p>}
         </>)}
         <p className="muted">Últimos movimientos</p>

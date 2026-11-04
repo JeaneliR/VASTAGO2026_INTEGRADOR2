@@ -86,6 +86,7 @@ PERMISOS = {
     "pt:escribir": {"Administrador", "Almacenero"},                            # despachos de producto terminado
     "trazabilidad:ver": {"Administrador", "Jefe de Producción", "Almacenero", "Gerente", "Operario"},
     "analitica:ver": {"Administrador", "Jefe de Producción", "Gerente"},
+    "asistente:usar": {"Administrador", "Jefe de Producción", "Almacenero", "Gerente"},
     "usuarios:gestionar": {"Administrador"},
     "auditoria:ver": {"Administrador"},
     "reportes:ver": {"Administrador", "Gerente", "Jefe de Producción", "Almacenero"},

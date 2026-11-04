@@ -74,11 +74,11 @@ chk("SM15", "Refresh sin cabecera anti-CSRF: 403", requests.post(B + "/api/auth/
 
 # ---- Datos (BD conectada y sembrada)
 inv = requests.get(B + "/api/inventario", headers=H(adm), timeout=30).json()
-chk("SM16", "Inventario leído desde PostgreSQL (12 insumos sembrados)", isinstance(inv, list) and len(inv) == 12, f"{len(inv)} insumos; estados: " + ", ".join(sorted({i['estado'] for i in inv})))
+chk("SM16", "Inventario leído desde PostgreSQL (12 insumos sembrados; 20 con la carga ampliada)", isinstance(inv, list) and len(inv) in (12, 20), f"{len(inv)} insumos; estados: " + ", ".join(sorted({i['estado'] for i in inv})))
 k = requests.get(B + "/api/kpis", headers=H(adm), timeout=30)
 chk("SM17", "KPIs del dashboard (200, 4 indicadores)", k.status_code == 200 and len(k.json()) == 4, f"HTTP {k.status_code}; claves: " + ", ".join(k.json().keys()))
 f = requests.get(B + "/api/forecast", headers=H(adm), timeout=30).json()
-chk("SM18", "Pronóstico: 3 productos × 3 meses con MAPE", len(f.get("series", {})) == 3 and all(len(s["forecast"]) == 3 for s in f["series"].values()), f"{len(f.get('series', {}))} series; MAPE: " + ", ".join(f"{s['mape']}" for s in f["series"].values()))
+chk("SM18", "Pronóstico con datos reales: 3 series × 3 meses con MAPE y WAPE", len(f.get("series", {})) == 3 and all(len(s["forecast"]) == 3 for s in f["series"].values()), f"{len(f.get('series', {}))} series; WAPE: " + ", ".join(f"{s['wape']}" for s in f["series"].values()))
 usr = requests.get(B + "/api/auth/usuarios", headers=H(adm), timeout=30).json()
 chk("SM19", "Usuarios demo creados por el seed (6)", len(usr) == 6, ", ".join(u["rol"] for u in usr))
 
@@ -125,6 +125,14 @@ chk("SM30", "Trazabilidad hacia atrás del lote L-2026-017 (4 etapas con respons
     f"HTTP {tz.status_code}; etapas: " + ", ".join(e["nombre"] for e in tj.get("etapas", [])))
 ger = login("gerente@vastagoyco.pe").json().get("access_token", "")
 chk("SM31", "RBAC: el gerente no puede iniciar etapas de producción (403)", requests.post(B + "/api/produccion/1/etapas/1/iniciar", json={"equipo_id": 1}, headers=H(ger), timeout=30).status_code == 403, "esperado 403")
+
+asr = requests.post(B + "/api/asistente/preguntar", json={"pregunta": "¿Para cuánto alcanza el suero de leche?"}, headers=H(ger), timeout=30)
+aj = asr.json() if asr.status_code == 200 else {}
+chk("SM32", "Asistente: responde cuánto alcanza el suero de leche con el kardex real (intención, stock y días)",
+    asr.status_code == 200 and aj.get("intencion") == "cobertura" and "LAC-SDL-02" in aj.get("respuesta", "") and any(t["etiqueta"] == "Stock al corte" for t in aj.get("tarjetas", [])),
+    f"HTTP {asr.status_code}; " + aj.get("respuesta", "")[:160])
+op = login("operario1@vastagoyco.pe").json().get("access_token", "")
+chk("SM33", "RBAC: el operario no puede usar el asistente (403)", requests.post(B + "/api/asistente/preguntar", json={"pregunta": "hola"}, headers=H(op), timeout=30).status_code == 403, "esperado 403")
 
 # ---- Limitación de tasa (al final)
 codes = [requests.post(B + "/api/auth/login", json={"email": "victima@vastagoyco.pe", "password": "x%d" % i}, timeout=30).status_code for i in range(14)]

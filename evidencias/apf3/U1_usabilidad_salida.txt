@@ -1,0 +1,30 @@
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python
+rootdir: /tmp/claude-0/-home-claude/a90e853e-30fe-5c9d-9205-7c4a145166c6/scratchpad/merge
+plugins: anyio-4.15.1, cov-7.1.0
+collecting ... collected 22 items
+
+pruebas/usabilidad/test_usabilidad.py::test_ua01_pagina_inicial_declara_idioma_titulo_y_viewport PASSED [  4%]
+pruebas/usabilidad/test_usabilidad.py::test_ua02_login_por_teclado_con_etiquetas_asociadas PASSED [  9%]
+pruebas/usabilidad/test_usabilidad.py::test_ua03_tarea_consultar_cobertura_de_suero_en_pocos_pasos PASSED [ 13%]
+pruebas/usabilidad/test_usabilidad.py::test_ua04_tarea_descargar_reporte_excel_en_pocos_pasos PASSED [ 18%]
+pruebas/usabilidad/test_usabilidad.py::test_ua05_navegacion_consistente_todas_las_vistas_del_administrador PASSED [ 22%]
+pruebas/usabilidad/test_usabilidad.py::test_ua06_todos_los_botones_tienen_nombre_accesible PASSED [ 27%]
+pruebas/usabilidad/test_usabilidad.py::test_ua07_credenciales_incorrectas_mensaje_claro_y_sin_filtrar_datos PASSED [ 31%]
+pruebas/usabilidad/test_usabilidad.py::test_ua08_formulario_de_login_impide_envio_vacio_o_con_correo_invalido PASSED [ 36%]
+pruebas/usabilidad/test_usabilidad.py::test_ua09_cantidad_negativa_o_cero_se_bloquea_en_movimientos_de_inventario PASSED [ 40%]
+pruebas/usabilidad/test_usabilidad.py::test_ua10_salida_mayor_al_stock_se_rechaza_con_mensaje_en_pantalla PASSED [ 45%]
+pruebas/usabilidad/test_usabilidad.py::test_ua11_correo_destinatario_invalido_no_se_guarda PASSED [ 50%]
+pruebas/usabilidad/test_usabilidad.py::test_ua12_desactivar_usuario_pide_confirmacion_y_cancelar_no_cambia_nada PASSED [ 54%]
+pruebas/usabilidad/test_usabilidad.py::test_ua13_asistente_muestra_sugerencias_de_ayuda_al_abrir PASSED [ 59%]
+pruebas/usabilidad/test_usabilidad.py::test_ua14_pregunta_no_entendida_recibe_orientacion_y_no_error PASSED [ 63%]
+pruebas/usabilidad/test_usabilidad.py::test_ua15_campos_de_reportes_tienen_etiqueta_y_ayuda PASSED [ 68%]
+pruebas/usabilidad/test_usabilidad.py::test_ua16_dashboard_muestra_indicadores_y_alertas_accionables PASSED [ 72%]
+pruebas/usabilidad/test_usabilidad.py::test_ua17_la_sesion_se_conserva_al_recargar PASSED [ 77%]
+pruebas/usabilidad/test_usabilidad.py::test_ua18_carga_inicial_del_dashboard_es_rapida PASSED [ 81%]
+pruebas/usabilidad/test_usabilidad.py::test_ua19_diseno_adaptable_sin_desplazamiento_horizontal_en_movil PASSED [ 86%]
+pruebas/usabilidad/test_usabilidad.py::test_ua20_menu_movil_se_abre_y_cierra PASSED [ 90%]
+pruebas/usabilidad/test_usabilidad.py::test_ua21_accesibilidad_axe_en_todas_las_vistas PASSED [ 95%]
+pruebas/usabilidad/test_usabilidad.py::test_ua22_accesibilidad_axe_en_formularios_modales PASSED [100%]
+
+- generated xml file: /tmp/claude-0/-home-claude/a90e853e-30fe-5c9d-9205-7c4a145166c6/scratchpad/merge/evidencias/apf3/U1_junit_usabilidad.xml -
+============================= 22 passed in 14.94s ==============================

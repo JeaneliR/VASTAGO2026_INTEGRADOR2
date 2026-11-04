@@ -1,0 +1,45 @@
+codigo,nombre,familia,unidad,stock_minimo,stock_actual
+DER-LCF-03,LICOR+ DANIFAT,Derivados de cacao,kg,100.0,0.0
+DER-LCM-02,LICOR DE CACAO MOLIDO,Derivados de cacao,kg,20.0,0.0
+DER-LCO-01,LICOR DE CACAO FINO,Derivados de cacao,kg,150.0,45.0
+LAC-LCO-04,ESENCIA DE LECHE,Lácteos,kg,25.0,30.0
+LAC-LDE-01,LECHE DESCREMADA,Lácteos,kg,25.0,177.8
+LAC-SDL-02,SUERO DE LECHE,Lácteos,kg,50.0,265.55
+LIP-CBE-05,CBE CHOCOMATE EZ3|00,Grasas y mantecas,kg,100.0,714.5
+LIP-CBR-06,CBR UNICBR63,Grasas y mantecas,kg,175,607.0
+LIP-CBS-07,CBS ISFAT H2100EM,Grasas y mantecas,kg,25.0,60.99
+LIP-GPC-03,MANTECA COBERTHEL 1570H,Grasas y mantecas,kg,160.0,1396.0
+LIP-MCC-01,MANTECA DE CACAO - KULKAO,Grasas y mantecas,kg,100.0,3141.84
+LIP-MPS-02,MANTECA DE PALMA SOCOLATE,Grasas y mantecas,kg,160.0,0.0
+NUC-ALM-01,ALMENDRAS TOSTADAS,Frutos secos y centros,kg,10.0,46.0
+NUC-ARA-05,ARÁNDANOS,Frutos secos y centros,kg,12.0,42.0
+NUC-ARE-06,ARROZ EXTRUIDO,Frutos secos y centros,kg,12.0,246.0
+NUC-GAL-07,GALLETA MUNICIÓN,Frutos secos y centros,kg,5.4,2.7
+NUC-MAE-02,MANÍ TOSTADO ENTERO,Frutos secos y centros,kg,25.0,236.0
+NUC-MAP-03,MANÍ TOSTADO PARTIDO,Frutos secos y centros,kg,15.0,55.0
+NUC-PAS-04,PASAS MEDIANAS,Frutos secos y centros,kg,50.0,640.0
+OBR-CAH-09,POLVO DE CACAO NH VICENTE,Cacao en polvo,kg,20.0,0.0
+OBR-CNB-08,POLVO DE CACAO NATURAL BLEND,Cacao en polvo,kg,25.0,390.0
+OBR-CNG-05,COCOA NEGRA - CHOCOMANI,Cacao en polvo,kg,5.0,0.0
+OBR-CNG-06,POLVO DE CACAO ALCALINO,Cacao en polvo,kg,10.0,0.0
+OBR-CNH-02,POLVO DE CACAO CHINA NH,Cacao en polvo,kg,75.0,44.0
+OBR-CNS-03,POLVO DE CACAO NS01,Cacao en polvo,kg,25.0,430.0
+OBR-CNT-07,POLVO DE CACAO NEGRA TURKA,Cacao en polvo,kg,25.0,0.0
+OBR-CPN-04,POLVO DE CACAO NATURAL (AYNI FOOD),Cacao en polvo,kg,150.0,0.0
+OBR-CRY-01,POLVO DE CACAO EL REY,Cacao en polvo,kg,25.0,425.0
+SAC-ALB-01,AZÚCAR BLANCA,Azúcares,kg,150.0,275.35
+SAC-ALF-02,AZÚCAR IMPALPABLE,Azúcares,kg,20.0,150.0
+SAC-ALR-03,AZÚCAR RUBIA,Azúcares,kg,150.0,994.0
+TEC-BES-04,BENZOATO DE SODIO,Aditivos y tecnológicos,kg,5.0,7.5
+TEC-COL-15,COBERTURA DE LECHE,Aditivos y tecnológicos,kg,50.0,248.0
+TEC-ECB-11,ESENCIA DE CHOCOLATE,Aditivos y tecnológicos,kg,5.0,22.0
+TEC-GAR-05,GOMA ARÁBICA,Aditivos y tecnológicos,kg,5.0,22.5
+TEC-GLU-06,GLUCOSA,Aditivos y tecnológicos,kg,5.0,19.0
+TEC-LEC-01,LECITINA DE SOYA,Aditivos y tecnológicos,kg,15.0,120.0
+TEC-MAI-13,MAICENA,Aditivos y tecnológicos,kg,5.0,7.6
+TEC-PGR-02,PGPR EMULSIONANTE,Aditivos y tecnológicos,kg,10.0,50.0
+TEC-QGL-08,QUICK GLOSS PLUS,Aditivos y tecnológicos,kg,10.0,20.0
+TEC-QLA-09,QUICK LAC,Aditivos y tecnológicos,kg,10.0,20.0
+TEC-SLT-10,SAL,Aditivos y tecnológicos,kg,0.5,0.5
+TEC-TCH-14,TALCO CHINO,Aditivos y tecnológicos,kg,10.0,20.0
+TEC-VNL-12,VAINILLA CHINA,Aditivos y tecnológicos,kg,5.0,17.5

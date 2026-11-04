@@ -7,6 +7,7 @@ import Produccion from "./components/Produccion.jsx";
 import Analitica from "./components/Analitica.jsx";
 import ProductoTerminado from "./components/ProductoTerminado.jsx";
 import Trazabilidad from "./components/Trazabilidad.jsx";
+import Asistente from "./components/Asistente.jsx";
 import { Usuarios, Auditoria } from "./components/Admin.jsx";
 import Reportes from "./components/Reportes.jsx";
 import Correo from "./components/Correo.jsx";
@@ -19,6 +20,7 @@ const VISTAS = [
   { id: "pt", t: "Producto terminado", p: "pt:ver", C: ProductoTerminado },
   { id: "trazabilidad", t: "Trazabilidad", p: "trazabilidad:ver", C: Trazabilidad },
   { id: "analitica", t: "Analítica IA", p: "analitica:ver", C: Analitica },
+  { id: "asistente", t: "Asistente", p: "asistente:usar", C: Asistente },
   { id: "usuarios", t: "Usuarios", p: "usuarios:gestionar", C: Usuarios },
   { id: "auditoria", t: "Auditoría", p: "auditoria:ver", C: Auditoria },
   { id: "reportes", t: "Reportes", p: "reportes:ver", C: Reportes },
